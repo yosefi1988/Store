@@ -1,0 +1,15 @@
+﻿
+ --ساخت مدل از دیتابیس
+Scaffold-DbContext "Server=officialapp.ir;Database=officia1_Store;user id=officia1_VS_msi;password=0Kege?137;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Models\StoreDbModels" -ContextDir "StoreDbContext" 
+ 
+ -- دفعات بعدی 
+Scaffold-DbContext "Server=officialapp.ir;Database=officia1_Store;user id=officia1_VS_msi;password=0Kege?137;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Models\StoreDbModels" -ContextDir "StoreDbContext" -context "officia1_StoreContextTmp" -Force
+
+
+
+--برای identity یک ماگریشن مینویسیم
+بعدش دیتابیس رو بروز میکنیم
+جداول identity رو میسازه
+
+add-migration addIdentity -context "AppDbContext"
+update-database -context "AppDbContext"
