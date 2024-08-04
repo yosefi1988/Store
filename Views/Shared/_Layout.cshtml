@@ -26,12 +26,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Employees" asp-action="Index">Employee</a>
-
-                            <a asp-area="identity" asp-page="/account/login">login</a>
-
+                            <a href="/identity/account/login"
+                               class="btn btn-sm btn-white btn-icon rounded-pill d-none d-lg-inline-flex"
+                               data-toggle="tooltip" data-placement="left">
+                                <span class="btn-inner--icon"><i class="fas fa-sign-in"></i></span>
+                                <span class="btn-inner--text">Login</span>
+                            </a>
                         </li>
-                        <li class="nav-item"><a asp-page="/Account/Login" class="nav-link">Login</a></li>
 
 
                     </ul>

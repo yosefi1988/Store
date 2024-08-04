@@ -19,11 +19,12 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.Sign
     //.AddDefaultUI()
     .AddDefaultTokenProviders();
 
+
 builder.Services.AddDbContextPool<officia1_StoreContext>(options => options.UseSqlServer(sqlServerConnectionString));
 
 
-builder.Services.AddRazorPages(); 
-
+builder.Services.AddRazorPages();
+ 
 
 // Add services to the container.
 builder.Services.AddControllersWithViews()
@@ -57,6 +58,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapRazorPages();
 
 
 app.Run();
