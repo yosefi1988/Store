@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+ 
+@inject SignInManager<IdentityUser> SignInManager 
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -25,14 +29,35 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a href="/identity/account/login"
-                               class="btn btn-sm btn-white btn-icon rounded-pill d-none d-lg-inline-flex"
-                               data-toggle="tooltip" data-placement="left">
-                                <span class="btn-inner--icon"><i class="fas fa-sign-in"></i></span>
-                                <span class="btn-inner--text">Login</span>
-                            </a>
-                        </li>
+                        @if (SignInManager.IsSignedIn(User)){
+                            <li class="nav-item">
+                                <a href="/identity/account/logout"
+                                   class="btn btn-sm btn-white btn-icon rounded-pill d-none d-lg-inline-flex"
+                                   data-toggle="tooltip" data-placement="left">
+                                    <span class="btn-inner--icon"><i class="fas fa-sign-in"></i></span>
+                                    <span class="btn-inner--text">خروج</span>
+                                </a>
+                            </li>
+                        }else{
+                             <li class="nav-item">
+                                <a href="/identity/account/Login"
+                                   class="btn btn-sm btn-white btn-icon rounded-pill d-none d-lg-inline-flex"
+                                   data-toggle="tooltip" data-placement="left">
+                                    <span class="btn-inner--icon"><i class="fas fa-sign-in"></i></span>
+                                    <span class="btn-inner--text">ورود</span>
+                                </a>
+                             </li>   
+                             <li class="nav-item">
+                                <a href="/identity/account/Register"
+                                   class="btn btn-sm btn-white btn-icon rounded-pill d-none d-lg-inline-flex"
+                                   data-toggle="tooltip" data-placement="left">
+                                    <span class="btn-inner--icon"><i class="fas fa-sign-in"></i></span>
+                                    <span class="btn-inner--text">ثبت نام</span>
+                                </a>
+                             </li>                       
+                        }
+
+
 
 
                     </ul>

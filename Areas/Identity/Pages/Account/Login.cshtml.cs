@@ -66,13 +66,20 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            ///// <summary>
+            /////     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            /////     directly from your code. This API may change or be removed in future releases.
+            ///// </summary>
+            //[Required]
+            ////[EmailAddress]
+            //public string Email { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            //[EmailAddress]
-            public string Email { get; set; }
+            [Required(ErrorMessage ="شماره موبایل الزامی است")] 
+            public string Mobile { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -86,30 +93,38 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Display(Name = "Remember me?")]
+            [Display(Name = "من را به خاطر بسپار ")]
             public bool RememberMe { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            if (!string.IsNullOrEmpty(ErrorMessage))
-            {
-                ModelState.AddModelError(string.Empty, ErrorMessage);
-            }
+            //if (!string.IsNullOrEmpty(ErrorMessage))
+            //{
+            //    ModelState.AddModelError(string.Empty, ErrorMessage);
+            //}
 
-            returnUrl ??= Url.Content("~/");
+            //returnUrl ??= Url.Content("~/");
 
-            // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            //// Clear the existing external cookie to ensure a clean login process
+            //await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            //ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+
+            if(_signInManager.IsSignedIn(User))
+                Response.Redirect("./Logout");
 
             ReturnUrl = returnUrl;
+
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+             
+            if (_signInManager.IsSignedIn(User))
+                return RedirectToPage("./Logout");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
@@ -139,12 +154,12 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
                 //}
                  
 
-                var userNameExists = await _userManager.FindByNameAsync(Input.Email);
-                var ddddddddddddd = _userManager.FindByNameAsync(Input.Email);
-                var xxxxxxxxxxxxxxxx = _signInManager.UserManager.FindByNameAsync(Input.Email);
+                //var userNameExists = await _userManager.FindByNameAsync(Input.Email);
+                //var ddddddddddddd = _userManager.FindByNameAsync(Input.Email);
+                //var xxxxxxxxxxxxxxxx = _signInManager.UserManager.FindByNameAsync(Input.Email);
 
                 var result = await _signInManager.PasswordSignInAsync(
-                    Input.Email,
+                    Input.Mobile,
                     Input.Password,
                     Input.RememberMe,
                     lockoutOnFailure: false);
@@ -152,7 +167,10 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                        return LocalRedirect(returnUrl);
+                    //or
+                    //return Redirect(returnUrl);
+
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -165,7 +183,7 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "تلاش شما برای ورود نامعتبر است.");
                     return Page();
                 }
             }

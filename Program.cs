@@ -14,8 +14,13 @@ builder.Services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(
 
 //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 //    .AddEntityFrameworkStores<AppDbContext>();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<AppDbContext>()
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = false;
+            options.SignIn.RequireConfirmedEmail = false;
+            options.User.RequireUniqueEmail = false;
+        }
+    ).AddEntityFrameworkStores<AppDbContext>()
     //.AddDefaultUI()
     .AddDefaultTokenProviders();
 
