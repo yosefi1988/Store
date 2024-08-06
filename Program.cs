@@ -4,7 +4,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using WebApplicationStore.Models;
 using WebApplicationStore.Models.Contexts;
+using WebApplicationStore.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,15 +18,23 @@ builder.Services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(
 //    .AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         {
+            //options.Password.req
+            //options.Password.RequiredLength = 5;
+
             options.SignIn.RequireConfirmedAccount = false;
             options.SignIn.RequireConfirmedEmail = false;
+            //options.SignIn
+            
+            //options.Lockout
             options.User.RequireUniqueEmail = false;
+            options.User.AllowedUserNameCharacters = "0123456789";
         }
     ).AddEntityFrameworkStores<AppDbContext>()
     //.AddDefaultUI()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddErrorDescriber<PersianIdentityErrorDescriber>();
 
-
+builder.Services.AddScoped<IMessageSender, MessageSender>();
 builder.Services.AddDbContextPool<officia1_StoreContext>(options => options.UseSqlServer(sqlServerConnectionString));
 
 

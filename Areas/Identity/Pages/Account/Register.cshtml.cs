@@ -18,6 +18,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using WebApplicationStore.Repositories;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WebApplicationStore.Areas.Identity.Pages.Account
 {
@@ -25,10 +28,12 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IMessageSender _messageSender;
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly ILogger<RegisterModel> _logger;
 
         public RegisterModel(
+            IMessageSender messageSender,
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
@@ -37,7 +42,8 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
             _userManager = userManager;
             _userStore = userStore;
             _signInManager = signInManager;
-            _logger = logger; ;
+            _logger = logger; 
+            _messageSender = messageSender;
         }
 
         /// <summary>
@@ -80,6 +86,7 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
             /// </summary>
             [Required(ErrorMessage = "شماره موبایل الزامی است")] 
             [Display(Name = "شماره موبایل")]
+            [Remote("IsUserNameUsed", "Validations", ErrorMessage = "UserName already exists", HttpMethod = "post",AdditionalFields ="_requestVerificationToken")]
             public string Mobile { get; set; }
 
 
@@ -103,7 +110,16 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> IsUserNameUsed(string mobile = null)
+        {
+            var user = await _userManager.FindByEmailAsync(mobile);
+            //if (user == null) return Json(true);
+            if (user == null) return new JsonResult(true);
+            return new JsonResult(false);
+        }
+         
         public async Task OnGetAsync(string returnUrl = null)
         {
             //ReturnUrl = returnUrl;
@@ -145,6 +161,16 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
+
+
+                    // emailConfirmation
+                    var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //forget password
+                    //var emailConfirmationToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                    var emailmessage = Url.Action("Action", "Controller", new { username = user.UserName, token = emailConfirmationToken }, Request.Scheme);
+                    await _messageSender.SendEmailAsync(Input.Mobile, "subject", emailmessage,false);
+                    sendEmail();
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     //var callbackUrl = Url.Page(
@@ -174,6 +200,33 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private void sendEmail()
+        {
+             
+        }
+        private void confirmEmail0()
+        {
+
+        }
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string username , string token)
+        {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(token))
+            {
+                return NotFound();
+            }
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null) { return NotFound(); }
+
+            //ConfirmEmail
+            var result  = await _userManager.ConfirmEmailAsync(user, token);
+
+            //ResetPasswordA
+            //var result = await _userManager.ResetPasswordAsync(user, token,newPassword);
+
+            return Content(result.Succeeded ? "Confirmed" : "not Confirmed");
         }
 
         private IdentityUser CreateUser()
