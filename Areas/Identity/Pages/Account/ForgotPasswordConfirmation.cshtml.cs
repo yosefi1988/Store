@@ -20,6 +20,7 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
         /// </summary>
         public void OnGet()
         {
+
         }
     }
 }

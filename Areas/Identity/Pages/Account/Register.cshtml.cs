@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using WebApplicationStore.Controllers.Classroom;
 using WebApplicationStore.Repositories;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -26,17 +27,17 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMessageSender _messageSender;
-        private readonly IUserStore<IdentityUser> _userStore;
+        private readonly IUserStore<ApplicationUser> _userStore;
         private readonly ILogger<RegisterModel> _logger;
 
         public RegisterModel(
             IMessageSender messageSender,
-            UserManager<IdentityUser> userManager,
-            IUserStore<IdentityUser> userStore,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            IUserStore<ApplicationUser> userStore,
+            SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger)
         {
             _userManager = userManager;
@@ -86,7 +87,7 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
             /// </summary>
             [Required(ErrorMessage = "شماره موبایل الزامی است")] 
             [Display(Name = "شماره موبایل")]
-            [Remote("IsUserNameUsed", "Validations", ErrorMessage = "UserName already exists", HttpMethod = "post",AdditionalFields ="_requestVerificationToken")]
+            //[Remote("IsUserNameUsed", "Validations", ErrorMessage = "UserName already exists", HttpMethod = "post",AdditionalFields ="_requestVerificationToken")]
             public string Mobile { get; set; }
 
 
@@ -146,11 +147,13 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
                 var user = CreateUser();
 
                 //classroom
-                var user2 = new IdentityUser()
-                { 
+                var user2 = new ApplicationUser()
+                {
                     Email = "",
                     PasswordHash = "",
+                    Age = 20
                 };
+                user.Age = 21;
 
                 await _userStore.SetUserNameAsync(user, Input.Mobile, CancellationToken.None);
                 //await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -160,6 +163,10 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    var requestRoles = new List<string>() { string.Empty };
+                    requestRoles.Add("کاربر عادی");
+                    await _userManager.AddToRoleAsync(user, "NORMAL");
+
                     var userId = await _userManager.GetUserIdAsync(user);
 
 
@@ -168,8 +175,8 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
                     //forget password
                     //var emailConfirmationToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                    var emailmessage = Url.Action("Action", "Controller", new { username = user.UserName, token = emailConfirmationToken }, Request.Scheme);
-                    await _messageSender.SendEmailAsync(Input.Mobile, "subject", emailmessage,false);
+                    //var emailmessage = Url.Action("Action", "Controller", new { username = user.UserName, token = emailConfirmationToken }, Request.Scheme);
+                    //await _messageSender.SendEmailAsync(Input.Mobile, "subject", emailmessage,false);
                     sendEmail();
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -229,27 +236,27 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
             return Content(result.Succeeded ? "Confirmed" : "not Confirmed");
         }
 
-        private IdentityUser CreateUser()
+        private ApplicationUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<IdentityUser>();
+                return Activator.CreateInstance<ApplicationUser>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+                    $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<IdentityUser> GetEmailStore()
+        private IUserEmailStore<ApplicationUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<IdentityUser>)_userStore;
+            return (IUserEmailStore<ApplicationUser>)_userStore;
         }
     }
 }

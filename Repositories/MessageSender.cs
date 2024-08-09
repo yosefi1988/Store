@@ -8,7 +8,7 @@ namespace WebApplicationStore.Repositories
     {
         public Task SendEmailAsync(string email, string subject, string message, bool isMessageHtml)
         {
-            using (var client = new SmtpClient)
+            using (var client = new SmtpClient())
             {
                 var credentials = new NetworkCredential()
                 {
@@ -22,8 +22,8 @@ namespace WebApplicationStore.Repositories
 
                 using var emailMessage = new MailMessage()
                 {
-                    To = { new MailAddress(toEmail) },
-                    From = new MailAddress(toEmail), // with @gmail.com
+                    //To = { new MailAddress(toEmail) },
+                    //From = new MailAddress(toEmail), // with @gmail.com
                     Subject = subject,
                     Body = message,
                     IsBodyHtml = isMessageHtml

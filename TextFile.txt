@@ -13,3 +13,7 @@ Scaffold-DbContext "Server=officialapp.ir;Database=officia1_Store;user id=offici
 
 add-migration addIdentity -context "AppDbContext"
 update-database -context "AppDbContext"
+
+
+
+add-migration updateuser -context "AppDbContext"

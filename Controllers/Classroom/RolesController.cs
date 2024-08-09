@@ -7,93 +7,93 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationStore.Models.Contexts;
-using WebApplicationStore.Models.Metadata;
+using WebApplicationStore.Models.StoreDbModels;
 
 namespace WebApplicationStore.Controllers.Classroom
 {
-    [Authorize(Roles = "Admin")]
-    public class EmployeesController : Controller
-    {
-        private readonly AppDbContext _context;
 
-        public EmployeesController(AppDbContext context)
+    [Authorize]
+    public class RolesController : Controller
+    {
+        private readonly officia1_StoreContext _context;
+
+        public RolesController(officia1_StoreContext context)
         {
             _context = context;
         }
 
-        // GET: Employees
+        // GET: Roles
         public async Task<IActionResult> Index()
         {
-              return _context.employees != null ? 
-                          View(await _context.employees.ToListAsync()) :
-                          Problem("Entity set 'AppDbContext.employees'  is null.");
+              return _context.AspNetRoles != null ? 
+                          View(await _context.AspNetRoles.ToListAsync()) :
+                          Problem("Entity set 'officia1_StoreContext.AspNetRoles'  is null.");
         }
 
-        // GET: Employees/Details/5
-        [AllowAnonymous]    
-        public async Task<IActionResult> Details(int? id)
+        // GET: Roles/Details/5
+        public async Task<IActionResult> Details(string id)
         {
-            if (id == null || _context.employees == null)
+            if (id == null || _context.AspNetRoles == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.employees
+            var aspNetRole = await _context.AspNetRoles
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (employee == null)
+            if (aspNetRole == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            return View(aspNetRole);
         }
 
-        // GET: Employees/Create
+        // GET: Roles/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Employees/Create
+        // POST: Roles/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Family,Company,Email,Description")] Employee employee)
+        public async Task<IActionResult> Create([Bind("Id,Name,NormalizedName,ConcurrencyStamp")] AspNetRole aspNetRole)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employee);
+                _context.Add(aspNetRole);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            return View(aspNetRole);
         }
 
-        // GET: Employees/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Roles/Edit/5
+        public async Task<IActionResult> Edit(string id)
         {
-            if (id == null || _context.employees == null)
+            if (id == null || _context.AspNetRoles == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.employees.FindAsync(id);
-            if (employee == null)
+            var aspNetRole = await _context.AspNetRoles.FindAsync(id);
+            if (aspNetRole == null)
             {
                 return NotFound();
             }
-            return View(employee);
+            return View(aspNetRole);
         }
 
-        // POST: Employees/Edit/5
+        // POST: Roles/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Family,Company,Email,Description")] Employee employee)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,NormalizedName,ConcurrencyStamp")] AspNetRole aspNetRole)
         {
-            if (id != employee.Id)
+            if (id != aspNetRole.Id)
             {
                 return NotFound();
             }
@@ -102,12 +102,12 @@ namespace WebApplicationStore.Controllers.Classroom
             {
                 try
                 {
-                    _context.Update(employee);
+                    _context.Update(aspNetRole);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExists(employee.Id))
+                    if (!AspNetRoleExists(aspNetRole.Id))
                     {
                         return NotFound();
                     }
@@ -118,49 +118,49 @@ namespace WebApplicationStore.Controllers.Classroom
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            return View(aspNetRole);
         }
 
-        // GET: Employees/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Roles/Delete/5
+        public async Task<IActionResult> Delete(string id)
         {
-            if (id == null || _context.employees == null)
+            if (id == null || _context.AspNetRoles == null)
             {
                 return NotFound();
             }
 
-            var employee = await _context.employees
+            var aspNetRole = await _context.AspNetRoles
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (employee == null)
+            if (aspNetRole == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            return View(aspNetRole);
         }
 
-        // POST: Employees/Delete/5
+        // POST: Roles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            if (_context.employees == null)
+            if (_context.AspNetRoles == null)
             {
-                return Problem("Entity set 'AppDbContext.employees'  is null.");
+                return Problem("Entity set 'officia1_StoreContext.AspNetRoles'  is null.");
             }
-            var employee = await _context.employees.FindAsync(id);
-            if (employee != null)
+            var aspNetRole = await _context.AspNetRoles.FindAsync(id);
+            if (aspNetRole != null)
             {
-                _context.employees.Remove(employee);
+                _context.AspNetRoles.Remove(aspNetRole);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeExists(int id)
+        private bool AspNetRoleExists(string id)
         {
-          return (_context.employees?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.AspNetRoles?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

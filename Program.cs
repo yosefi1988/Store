@@ -2,11 +2,15 @@
 
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using WebApplicationStore.Controllers;
+using WebApplicationStore.Controllers.Classroom;
 using WebApplicationStore.Models;
 using WebApplicationStore.Models.Contexts;
 using WebApplicationStore.Repositories;
+using IEmailSender = WebApplicationStore.Controllers.IEmailSender;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +20,7 @@ builder.Services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(
 
 //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 //    .AddEntityFrameworkStores<AppDbContext>();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         {
             //options.Password.req
             //options.Password.RequiredLength = 5;
@@ -30,13 +34,15 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
             options.User.AllowedUserNameCharacters = "0123456789";
         }
     ).AddEntityFrameworkStores<AppDbContext>()
-    //.AddDefaultUI()
+    .AddDefaultUI()
     .AddDefaultTokenProviders()
     .AddErrorDescriber<PersianIdentityErrorDescriber>();
 
+
 builder.Services.AddScoped<IMessageSender, MessageSender>();
 builder.Services.AddDbContextPool<officia1_StoreContext>(options => options.UseSqlServer(sqlServerConnectionString));
-
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+//builder.Services.AddTransient<IEmailSender, YourSmsSender>();
 
 builder.Services.AddRazorPages();
  
