@@ -30,7 +30,7 @@ namespace WebApplicationStore.Models.Contexts
         public virtual DbSet<BdShoppingBasketType> BdShoppingBasketTypes { get; set; } = null!;
         public virtual DbSet<BdSizeType> BdSizeTypes { get; set; } = null!;
         public virtual DbSet<BdState> BdStates { get; set; } = null!;
-        public virtual DbSet<BdTax> BdTaxes { get; set; } = null!; 
+        public virtual DbSet<BdTax> BdTaxes { get; set; } = null!;
         public virtual DbSet<ScAdmin> ScAdmins { get; set; } = null!;
         public virtual DbSet<ScStoreDetail> ScStoreDetails { get; set; } = null!;
         public virtual DbSet<SdAddress> SdAddresses { get; set; } = null!;
@@ -275,7 +275,6 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.Title).HasMaxLength(255);
             });
 
- 
             modelBuilder.Entity<ScAdmin>(entity =>
             {
                 entity.ToTable("SC_Admins", "officia1_Dbadmin");
@@ -654,11 +653,18 @@ namespace WebApplicationStore.Models.Contexts
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.AspNetUserId).HasMaxLength(450);
+
                 entity.Property(e => e.Family).HasMaxLength(256);
 
                 entity.Property(e => e.Mobile).HasMaxLength(15);
 
                 entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.HasOne(d => d.AspNetUser)
+                    .WithMany(p => p.SdUsers)
+                    .HasForeignKey(d => d.AspNetUserId)
+                    .HasConstraintName("FK_SD_Users_AspNetUsers");
             });
 
             modelBuilder.Entity<SdVote>(entity =>

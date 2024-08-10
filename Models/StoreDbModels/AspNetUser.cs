@@ -10,6 +10,7 @@ namespace WebApplicationStore.Models.StoreDbModels
             AspNetUserClaims = new HashSet<AspNetUserClaim>();
             AspNetUserLogins = new HashSet<AspNetUserLogin>();
             AspNetUserTokens = new HashSet<AspNetUserToken>();
+            SdUsers = new HashSet<SdUser>();
             Roles = new HashSet<AspNetRole>();
         }
 
@@ -28,10 +29,12 @@ namespace WebApplicationStore.Models.StoreDbModels
         public DateTimeOffset? LockoutEnd { get; set; }
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
+        public int Age { get; set; }
 
         public virtual ICollection<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual ICollection<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual ICollection<AspNetUserToken> AspNetUserTokens { get; set; }
+        public virtual ICollection<SdUser> SdUsers { get; set; }
 
         public virtual ICollection<AspNetRole> Roles { get; set; }
     }

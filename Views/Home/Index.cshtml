@@ -1,4 +1,7 @@
-﻿@{
+﻿@using WebApplicationStore.Models.StoreDbModels
+ @model WebApplicationStore.Models.ViewModels.Home
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -12,6 +15,33 @@
         <p>user <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     }
 
+
+    @foreach (ViewHome item in Model.listMain)
+    {
+        <div>
+            @item.Id
+            @item.Name
+
+            @item.BuyInvoiceNumber
+            @item.PercentInterest
+
+            @item.PercentWages
+            @item.Discount
+            @item.RemainingCount
+            @item.Title
+            @item.ImageUrl
+
+            <hr />
+        </div>
+    }
+
+
+
+    <div class="text-center">
+        <h1 class="display-4">zarinpal</h1>
+        @*<input type="submit" value="ارسال درخواست" class="btn btn-success" />  *@
+        <a class="btn btn-primary btn-block" asp-action="PaymenBytHttpClient"> پرداخت</a>
+    </div>
 
 </div>
 
