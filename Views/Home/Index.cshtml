@@ -30,6 +30,10 @@
             @item.RemainingCount
             @item.Title
             @item.ImageUrl
+            @* @item.ColorCode *@
+             
+            @Html.ActionLink("جزئیات", "Index", "ProductDetials")
+            <a href="@Url.Action("Index", "ProductDetials")">جزئیات</a>
 
             <hr />
         </div>
