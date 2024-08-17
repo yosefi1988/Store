@@ -4,7 +4,7 @@ namespace WebApplicationStore.Models.ViewModels
 {
     public class Home
     {
-        public List<ViewHome> listMain { get; set; }
+        public List<ViewSiteHome> listMain { get; set; }
 
     }
  

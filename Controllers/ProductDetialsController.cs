@@ -10,17 +10,35 @@ namespace WebApplicationStore.Controllers
     {
         private readonly officia1_StoreContext _context;
 
-        // GET: ProductDetialsController
-        public ActionResult Index()
+        public ProductDetialsController(ILogger<HomeController> logger, officia1_StoreContext context)
         {
-            Home homeViewModel = new Home();
-            var listHome = _context.ViewHomes.ToList();
-
-            homeViewModel.listMain = listHome;
-
-            int a = 5;
-            return View(homeViewModel);
+            _context = context;
+            //_logger = logger;
         }
+
+        // GET: ProductDetialsController
+        public ActionResult Index(int id)
+        {
+            ProductDetails productDetailsViewModel = new ProductDetails();
+
+            var productlist = _context.ViewSiteProductDetails;
+            var productColorlist = _context.ViewSiteProductDetailsColors;
+            var productSizelist = _context.ViewSiteProductDetailsSizes;
+            var productSimilarSizelist = _context.ViewSiteProductDetailsSimilarProductInSizes;
+            var productSendPrices = _context.ViewSiteProductDetailsSendPrices;
+
+
+            productDetailsViewModel.product = productlist.Where(x => x.Id == id).ToList().FirstOrDefault();
+            productDetailsViewModel.productDetails_Colors = productColorlist.Where(x => x.ProductChargePropertiesId == id).ToList();
+            productDetailsViewModel.productDetailsSize = productSizelist.Where(x => x.ProductChargePropertiesId == id).ToList();
+            productDetailsViewModel.similarProductInSize = productSimilarSizelist.Where(x => x.ProductChargePropertiesId == id).ToList();
+            productDetailsViewModel.productSendPrice = productSendPrices.Where(x => x.ProductId == productDetailsViewModel.product.Id).ToList();
+
+            //int a = 5;
+            return View(productDetailsViewModel);
+
+        }
+
 
         // GET: ProductDetialsController/Details/5
         public ActionResult Details(int id)

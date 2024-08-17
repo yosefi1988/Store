@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using WebApplicationStore.Controllers.Classroom; 
 using WebApplicationStore.Models.StoreDbModels;
 using WebApplicationStore.Models.Metadata;
+using WebApplicationStore.Models.ViewModels;
 
 namespace WebApplicationStore.Models.Contexts
 {
@@ -14,6 +15,8 @@ namespace WebApplicationStore.Models.Contexts
         {
 
         }
+
         public DbSet<Employee> employees { get; set; }
+        public DbSet<WebApplicationStore.Models.ViewModels.ProductDetails>? ProductDetails { get; set; }
     } 
 }

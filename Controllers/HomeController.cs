@@ -44,12 +44,12 @@ namespace WebApplicationStore.Controllers
         public IActionResult Index()
         {
             Home homeViewModel = new Home();
-            var listHome = _context.ViewHomes.ToList();
+            var listHome = _context.ViewSiteHomes.ToList();
 
             homeViewModel.listMain = listHome;
 
             int a = 5;
-            return View(homeViewModel);
+            return View(homeViewModel); 
         }
 
         public IActionResult Privacy()

@@ -1,0 +1,133 @@
+﻿@using WebApplicationStore.Models.StoreDbModels
+@model WebApplicationStore.Models.ViewModels.ProductDetails
+
+ 
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+@Model.product.Id
+@Model.product.Name
+@Model.product.Description
+@Model.product.Code
+@Model.product.BuyPrice
+@Model.product.PercentInterest
+@Model.product.PercentWages
+@Model.product.Discount
+@Model.product.RemainingCount
+@Model.product.Title
+@Model.product.ColorCode
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <p>Admin <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    }
+    else
+    {
+        <p>user <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    }
+     
+
+</div>
+
+<hr />
+    Color:
+<br />
+@foreach (ViewSiteProductDetailsColor item in Model.productDetails_Colors)
+{
+    <div>
+        @item.ProductChargePropertiesId
+        @item.Title
+        @item.ColorCode
+        @item.OtherProductChargePropertiesId
+
+        @Html.ActionLink("مشاهده این رنک", "Index", "ProductDetials", new { id = @item.OtherProductChargePropertiesId }, null)
+        <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.OtherProductChargePropertiesId })">مشاهده این رنک</a>
+
+        <hr />
+    </div>
+}
+<hr />
+    Size:
+<br />
+@foreach (ViewSiteProductDetailsSize item in Model.productDetailsSize)
+{
+    <div>
+        @item.ProductChargePropertiesId
+        @item.SizeTitle
+        @item.SizeDescription
+        @item.SizeValue
+        @item.SizeValueDescription
+
+        @*             @Html.ActionLink("للللل", "Index", "ProductDetials", new { id = @item.Id }, null)
+
+    <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.Id })">للللل</a> *@
+
+        <hr />
+    </div>
+}
+
+<hr />
+    Similar Size:
+<br />
+@foreach (ViewSiteProductDetailsSimilarProductInSize item in Model.similarProductInSize)
+{
+    <div>
+        @item.ProductChargePropertiesId
+        @item.Name
+        @item.BuyInvoiceNumber
+        @item.PercentInterest
+        @item.PercentWages
+        @item.Discount
+        @item.RemainingCount
+        @item.Title
+        @item.ImageUrl
+
+        @Html.ActionLink("مشاهده این سایز", "Index", "ProductDetials", new { id = @item.ProductChargePropertiesId }, null)
+        <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.ProductChargePropertiesId })">مشاهده این سایز</a>
+
+        <hr />
+    </div>
+}
+<hr />
+    Send Price:
+<br />
+@foreach (ViewSiteProductDetailsSendPrice item in Model.productSendPrice)
+{
+    <div>
+        @item.ProductId
+        @item.Product
+        @item.ProductCode
+        @item.ProductDescription
+        @item.SendId
+        @item.Send
+        @item.CountryId
+        @item.Country
+        @item.StateId
+        @item.State
+        @item.Price
+
+        @*             @Html.ActionLink("للللل", "Index", "ProductDetials", new { id = @item.Id }, null)
+
+    <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.Id })">للللل</a> *@
+
+        <hr />
+    </div>
+}
+
+<div class="text-center">
+    <h1 class="display-4">zarinpal</h1>
+    @*<input type="submit" value="ارسال درخواست" class="btn btn-success" />  *@
+    <a class="btn btn-primary btn-block" asp-action="PaymenBytHttpClient"> پرداخت</a>
+</div>
+
+</div>
+
+
+

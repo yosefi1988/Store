@@ -1,5 +1,5 @@
 ﻿@using WebApplicationStore.Models.StoreDbModels
- @model WebApplicationStore.Models.ViewModels.Home
+@model WebApplicationStore.Models.ViewModels.Home
 
 @{
     ViewData["Title"] = "Home Page";
@@ -16,7 +16,7 @@
     }
 
 
-    @foreach (ViewHome item in Model.listMain)
+    @foreach (ViewSiteHome item in Model.listMain)
     {
         <div>
             @item.Id
@@ -30,10 +30,11 @@
             @item.RemainingCount
             @item.Title
             @item.ImageUrl
-            @* @item.ColorCode *@
-             
-            @Html.ActionLink("جزئیات", "Index", "ProductDetials")
-            <a href="@Url.Action("Index", "ProductDetials")">جزئیات</a>
+            @item.ColorCode
+              
+            @Html.ActionLink("جزئیات", "Index", "ProductDetials", new { id = @item.Id }, null)
+
+            <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.Id })">جزئیات</a>
 
             <hr />
         </div>

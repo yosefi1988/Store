@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using WebApplicationStore.Models.StoreDbModels;
+using WebApplicationStore.Models.ViewModels;
 
 namespace WebApplicationStore.Models.Contexts
 {
     public partial class officia1_StoreContext : DbContext
     {
- 
-
         public officia1_StoreContext(DbContextOptions<officia1_StoreContext> options)
             : base(options)
         {
         }
+
+
+
 
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; } = null!;
         public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; } = null!;
@@ -49,10 +51,19 @@ namespace WebApplicationStore.Models.Contexts
         public virtual DbSet<SdTransaction> SdTransactions { get; set; } = null!;
         public virtual DbSet<SdUser> SdUsers { get; set; } = null!;
         public virtual DbSet<SdVote> SdVotes { get; set; } = null!;
-        public virtual DbSet<ViewHome> ViewHomes { get; set; } = null!;
-        public virtual DbSet<ViewProductDetailsPageColor> ViewProductDetailsPageColors { get; set; } = null!;
-        public virtual DbSet<ViewProductDetailsPageSimilarProductInSize> ViewProductDetailsPageSimilarProductInSizes { get; set; } = null!;
-        public virtual DbSet<ViewProductDetailsPageSize> ViewProductDetailsPageSizes { get; set; } = null!;
+        public virtual DbSet<ViewAdminProductChargeId> ViewAdminProductChargeIds { get; set; } = null!;
+        public virtual DbSet<ViewAdminProductChargePropertiesId> ViewAdminProductChargePropertiesIds { get; set; } = null!;
+        public virtual DbSet<ViewAdminShoppingBasketId> ViewAdminShoppingBasketIds { get; set; } = null!;
+        public virtual DbSet<ViewAdminTransactionId> ViewAdminTransactionIds { get; set; } = null!;
+        public virtual DbSet<ViewAdminUserId> ViewAdminUserIds { get; set; } = null!;
+        public virtual DbSet<ViewSiteHome> ViewSiteHomes { get; set; } = null!;
+        public virtual DbSet<ViewSiteProductDetail> ViewSiteProductDetails { get; set; } = null!;
+        public virtual DbSet<ViewSiteProductDetailsColor> ViewSiteProductDetailsColors { get; set; } = null!;
+        public virtual DbSet<ViewSiteProductDetailsSendPrice> ViewSiteProductDetailsSendPrices { get; set; } = null!;
+        public virtual DbSet<ViewSiteProductDetailsSimilarProductInSize> ViewSiteProductDetailsSimilarProductInSizes { get; set; } = null!;
+        public virtual DbSet<ViewSiteProductDetailsSize> ViewSiteProductDetailsSizes { get; set; } = null!;
+        public virtual DbSet<ViewUserBasket> ViewUserBaskets { get; set; } = null!;
+        public virtual DbSet<ViewUserBasketsObject> ViewUserBasketsObjects { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -692,24 +703,109 @@ namespace WebApplicationStore.Models.Contexts
                     .HasConstraintName("FK_SD_Votes_SD_Users");
             });
 
-            modelBuilder.Entity<ViewHome>(entity =>
+            modelBuilder.Entity<ViewAdminProductChargeId>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToView("View_home\\", "officia1_DbadminMsi");
+                entity.ToView("View_Admin_ProductChargeID");
+
+                entity.Property(e => e.ChargeDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.Name).HasMaxLength(255);
+                entity.Property(e => e.Product).HasMaxLength(255);
 
-                entity.Property(e => e.Title).HasMaxLength(255);
+                entity.Property(e => e.ProductChargeId).HasColumnName("ProductChargeID");
             });
 
-            modelBuilder.Entity<ViewProductDetailsPageColor>(entity =>
+            modelBuilder.Entity<ViewAdminProductChargePropertiesId>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToView("View_ProductDetailsPage_Colors", "officia1_DbadminMsi");
+                entity.ToView("View_Admin_ProductChargePropertiesID");
+
+                entity.Property(e => e.ChargeDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Color).HasMaxLength(255);
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ProductChargePropertiesId).HasColumnName("ProductChargePropertiesID");
+
+                entity.Property(e => e.ProductName).HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<ViewAdminShoppingBasketId>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_Admin_ShoppingBasketID");
+
+                entity.Property(e => e.BasketType).HasMaxLength(50);
+
+                entity.Property(e => e.Family).HasMaxLength(256);
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Mobile).HasMaxLength(15);
+
+                entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.Property(e => e.ShoppingBasketId).HasColumnName("ShoppingBasketID");
+            });
+
+            modelBuilder.Entity<ViewAdminTransactionId>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_Admin_TransactionID");
+
+                entity.Property(e => e.BasketType).HasMaxLength(50);
+
+                entity.Property(e => e.Family).HasMaxLength(256);
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Mobile).HasMaxLength(15);
+
+                entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.Property(e => e.PaymentDate).HasColumnType("datetime");
+
+                entity.Property(e => e.PaymentTrackingNo)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.ShoppingBasketId).HasColumnName("ShoppingBasketID");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
+            });
+
+            modelBuilder.Entity<ViewAdminUserId>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_Admin_UserID");
+
+                entity.Property(e => e.Family).HasMaxLength(256);
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Mobile).HasMaxLength(15);
+
+                entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.Property(e => e.UserName).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<ViewSiteHome>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_Site_Home", "officia1_DbadminMsi");
 
                 entity.Property(e => e.ColorCode)
                     .HasMaxLength(15)
@@ -718,14 +814,21 @@ namespace WebApplicationStore.Models.Contexts
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.Name).HasMaxLength(255);
+
                 entity.Property(e => e.Title).HasMaxLength(255);
             });
 
-            modelBuilder.Entity<ViewProductDetailsPageSimilarProductInSize>(entity =>
+            modelBuilder.Entity<ViewSiteProductDetail>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToView("View_ProductDetailsPage_SimilarProductInSize", "officia1_DbadminMsi");
+                entity.ToView("View_Site_ProductDetails");
+
+                entity.Property(e => e.ColorCode)
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .IsFixedLength();
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -734,11 +837,73 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.Title).HasMaxLength(255);
             });
 
-            modelBuilder.Entity<ViewProductDetailsPageSize>(entity =>
+            modelBuilder.Entity<ViewSiteProductDetailsColor>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToView("View_ProductDetailsPage_Sizes", "officia1_DbadminMsi");
+                entity.ToView("View_Site_ProductDetails_Colors", "officia1_DbadminMsi");
+
+                entity.Property(e => e.ColorCode)
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.OtherProductChargePropertiesId).HasColumnName("OtherProductChargePropertiesID");
+
+                entity.Property(e => e.ProductChargePropertiesId).HasColumnName("ProductChargePropertiesID");
+
+                entity.Property(e => e.Title).HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<ViewSiteProductDetailsSendPrice>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_Site_ProductDetails_SendPrices");
+
+                entity.Property(e => e.Country).HasMaxLength(256);
+
+                entity.Property(e => e.CountryId).HasColumnName("CountryID");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Product).HasMaxLength(255);
+
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
+
+                entity.Property(e => e.Send).HasMaxLength(256);
+
+                entity.Property(e => e.SendId).HasColumnName("SendID");
+
+                entity.Property(e => e.State).HasMaxLength(256);
+
+                entity.Property(e => e.StateId).HasColumnName("StateID");
+            });
+
+            modelBuilder.Entity<ViewSiteProductDetailsSimilarProductInSize>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_Site_ProductDetails_SimilarProductInSize", "officia1_DbadminMsi");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Name).HasMaxLength(255);
+
+                entity.Property(e => e.ProductChargePropertiesId).HasColumnName("ProductChargePropertiesID");
+
+                entity.Property(e => e.Title).HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<ViewSiteProductDetailsSize>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_Site_ProductDetails_Sizes", "officia1_DbadminMsi");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.ProductChargePropertiesId).HasColumnName("ProductChargePropertiesID");
 
@@ -747,6 +912,57 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.SizeValue)
                     .HasMaxLength(10)
                     .IsFixedLength();
+            });
+
+            modelBuilder.Entity<ViewUserBasket>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_User_Baskets");
+
+                entity.Property(e => e.BasketStatus).HasMaxLength(50);
+
+                entity.Property(e => e.BasketStatusId).HasColumnName("BasketStatusID");
+
+                entity.Property(e => e.ShoppingBasketId).HasColumnName("ShoppingBasketID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+            });
+
+            modelBuilder.Entity<ViewUserBasketsObject>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_User_BasketsObjects", "officia1_DbadminMsi");
+
+                entity.Property(e => e.AddInToBasketDate).HasColumnType("datetime");
+
+                entity.Property(e => e.BasketStatus).HasMaxLength(50);
+
+                entity.Property(e => e.BasketStatusId).HasColumnName("BasketStatusID");
+
+                entity.Property(e => e.Color).HasMaxLength(255);
+
+                entity.Property(e => e.ColorCode)
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ProductChargeId).HasColumnName("ProductChargeID");
+
+                entity.Property(e => e.ProductChargePropertiesId).HasColumnName("ProductChargePropertiesID");
+
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
+
+                entity.Property(e => e.ProductName).HasMaxLength(255);
+
+                entity.Property(e => e.ShoppingBasketId).HasColumnName("ShoppingBasketID");
+
+                entity.Property(e => e.Tax).HasMaxLength(255);
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
             });
 
             OnModelCreatingPartial(modelBuilder);
