@@ -15,8 +15,6 @@ namespace WebApplicationStore.Models.Contexts
         }
 
 
-
-
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; } = null!;
         public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; } = null!;
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; } = null!;
@@ -33,6 +31,7 @@ namespace WebApplicationStore.Models.Contexts
         public virtual DbSet<BdSizeType> BdSizeTypes { get; set; } = null!;
         public virtual DbSet<BdState> BdStates { get; set; } = null!;
         public virtual DbSet<BdTax> BdTaxes { get; set; } = null!;
+        public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<ScAdmin> ScAdmins { get; set; } = null!;
         public virtual DbSet<ScStoreDetail> ScStoreDetails { get; set; } = null!;
         public virtual DbSet<SdAddress> SdAddresses { get; set; } = null!;
@@ -284,6 +283,11 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Title).HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<Employee>(entity =>
+            {
+                entity.ToTable("employees");
             });
 
             modelBuilder.Entity<ScAdmin>(entity =>
@@ -923,6 +927,8 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.BasketStatus).HasMaxLength(50);
 
                 entity.Property(e => e.BasketStatusId).HasColumnName("BasketStatusID");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.ShoppingBasketId).HasColumnName("ShoppingBasketID");
 

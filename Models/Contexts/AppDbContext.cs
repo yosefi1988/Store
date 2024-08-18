@@ -17,6 +17,7 @@ namespace WebApplicationStore.Models.Contexts
         }
 
         public DbSet<Employee> employees { get; set; }
-        public DbSet<WebApplicationStore.Models.ViewModels.ProductDetails>? ProductDetails { get; set; }
+        public DbSet<ProductDetails>? ProductDetails { get; set; }
+        public DbSet<ShopingBasket>? shopingBasket { get; set; }
     } 
 }

@@ -1,0 +1,37 @@
+﻿@using WebApplicationStore.Models.StoreDbModels
+@model WebApplicationStore.Models.ViewModels.ShopingBasket
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div>
+    <h4>Shoping Basket</h4>
+    <hr />
+    <dl class="row">
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+<hr />
+    Baskets :
+<br />
+@foreach (ViewUserBasket item in Model.baskets)
+{
+    <div>
+        @item.ShoppingBasketId
+        @item.UserId
+        @item.BasketStatusId
+        @item.BasketStatus
+
+        @Html.ActionLink("مشاهده این ", "Index", "controler", new { id = @item.UserId }, null)
+        <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.UserId })">مشاهده این </a>
+
+        <hr />
+    </div>
+}
+<hr /> 

@@ -7,7 +7,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAEXmh/jSamEmfOUgI67L+dwAAAAACAAAAAAAQZgAAAAEAACAAAACsEwVjdXZkXwbIgG/Exshk5vLPsz4BItfJ1F+8cepvyQAAAAAOgAAAAAIAACAAAAA/tx8dkY+wNqnWaNbDM/G2IveK6F0ugyZxlbiemHZe8SAAAABRB1tnD2fv8298JWJ7NzM+uuUYaim5a+0RTWYz61IGB0AAAAA5L1IPjZx61F887DPtbFZtHyePI9S1rvNT3x/DWAU259VDQQOcLW01Pm1KnXvmPmxAfgPIpd22mK5+9VwkZ/d+</EncryptedPassword>
     <_PublishTargetUrl>ftp://sajjadyosefi.ir</_PublishTargetUrl>
-    <History>False|2024-08-16T19:54:17.9906119Z||;False|2024-08-16T12:52:37.3724068-07:00||;False|2024-08-16T12:50:56.8038524-07:00||;False|2024-08-16T12:50:33.1109051-07:00||;False|2024-08-16T12:49:32.2644858-07:00||;True|2024-08-16T06:06:03.8031360-07:00||;False|2024-08-16T05:50:13.3819826-07:00||;True|2024-08-16T05:09:10.5103290-07:00||;True|2024-08-15T01:27:12.3458101-07:00||;True|2024-08-10T14:21:47.7029768-07:00||;</History>
+    <History>False|2024-08-17T20:11:30.8797246Z||;False|2024-08-17T13:08:19.8331742-07:00||;False|2024-08-16T12:54:17.9906119-07:00||;False|2024-08-16T12:52:37.3724068-07:00||;False|2024-08-16T12:50:56.8038524-07:00||;False|2024-08-16T12:50:33.1109051-07:00||;False|2024-08-16T12:49:32.2644858-07:00||;True|2024-08-16T06:06:03.8031360-07:00||;False|2024-08-16T05:50:13.3819826-07:00||;True|2024-08-16T05:09:10.5103290-07:00||;True|2024-08-15T01:27:12.3458101-07:00||;True|2024-08-10T14:21:47.7029768-07:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -2029,10 +2029,18 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     </File>
   </ItemGroup>
   <ItemGroup>
+    <DestinationConnectionStrings Include="RemoteSqlServerDatabaseConnectionString">
+      <Value>Server=officialapp.ir%3bDatabase=officia1_Store%3buser id=officia1_VS_msi%3bpassword=0Kege%3f137%3b</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+  <ItemGroup>
     <EFMigrations Include="WebApplicationStore.Models.Contexts.AppDbContext">
       <Value>Server=officialapp.ir%3bDatabase=officia1_Store%3buser id=officia1_VS_msi%3bpassword=0Kege%3f137%3b</Value>
     </EFMigrations>
     <EFMigrations Include="WebApplicationStore.Models.Contexts.officia1_StoreContext">
+      <Value>Server=officialapp.ir%3bDatabase=officia1_Store%3buser id=officia1_VS_msi%3bpassword=0Kege%3f137%3b</Value>
+    </EFMigrations>
+    <EFMigrations Include="WebApplicationStore.StoreDbContext.officia1_StoreContextTmp">
       <Value>Server=officialapp.ir%3bDatabase=officia1_Store%3buser id=officia1_VS_msi%3bpassword=0Kege%3f137%3b</Value>
     </EFMigrations>
   </ItemGroup>
