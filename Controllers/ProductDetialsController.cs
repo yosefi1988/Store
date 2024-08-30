@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationStore.Models.Contexts;
-using WebApplicationStore.Models.ViewModels;
+using WebApplicationStore.Models.ViewModels; 
+
 
 namespace WebApplicationStore.Controllers
 {
@@ -46,8 +48,55 @@ namespace WebApplicationStore.Controllers
             return View();
         }
 
-        // GET: ProductDetialsController/Create
-        public ActionResult Create()
+
+        public ActionResult Payment(int id)
+        {
+            // بازیابی لیست کشورها
+            var countries = _context.BdCountries.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Title
+            }).ToList();
+
+            ViewBag.Countries = countries;
+
+
+
+            //  لیست 
+            var sendProductsPrice = _context.BdSendProductsPrices.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Price + "-" + c.StateId + "-" + c.ProductId + "-" + c.Title
+            }).ToList();
+            ViewBag.SendProductsPrices = sendProductsPrice;
+
+            return View();
+        }
+        // اکشن برای دریافت استان‌ها بر اساس کشور انتخاب شده
+        public IActionResult GetStates(int countryId)
+        {
+            var states = _context.BdStates
+                .Where(s => s.CountryId == countryId)
+                .Select(s => new { s.Id, s.Title })
+                .ToList();
+
+            return Json(states);
+        }
+
+        // اکشن برای دریافت شهرها بر اساس استان انتخاب شده
+        public IActionResult GetCities(int stateId)
+        {
+            var cities = _context.BdCities
+                .Where(c => c.StateId == stateId)
+                .Select(c => new { c.Id, c.Title })
+                .ToList();
+
+            return Json(cities);
+        }
+
+
+            // GET: ProductDetialsController/Create
+            public ActionResult Create()
         {
             return View();
         }

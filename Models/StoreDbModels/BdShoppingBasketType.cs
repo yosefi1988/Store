@@ -12,6 +12,7 @@ namespace WebApplicationStore.Models.StoreDbModels
 
         public int Id { get; set; }
         public string? Status { get; set; }
+        public bool? IsDefault { get; set; }
         public string? Description { get; set; }
 
         public virtual ICollection<SdShoppingBasket> SdShoppingBaskets { get; set; }

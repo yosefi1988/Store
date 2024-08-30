@@ -18,6 +18,6 @@ namespace WebApplicationStore.Models.Contexts
 
         public DbSet<Employee> employees { get; set; }
         public DbSet<ProductDetails>? ProductDetails { get; set; }
-        public DbSet<ShopingBasket>? shopingBasket { get; set; }
+        public DbSet<ShoppingBasketDetails>? shopingBasket { get; set; }
     } 
 }

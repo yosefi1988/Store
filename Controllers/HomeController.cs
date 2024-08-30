@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using WebApplicationStore.Controllers.BusinessLayout;
 using WebApplicationStore.Models.Contexts;
 using WebApplicationStore.Models.ViewModels;
 using zarinpalasp.netcorerest.Models;
@@ -31,14 +32,17 @@ namespace WebApplicationStore.Controllers
         string authority;
         string description = "خرید تستی ";
         string callbackurl = "http://localhost:2812/Home/VerifyByHttpClient";
+        UsersUtils _xxxx;
 
 
         private readonly officia1_StoreContext _context; 
 
-        public HomeController(ILogger<HomeController> logger, officia1_StoreContext context)
+        public HomeController(ILogger<HomeController> logger, officia1_StoreContext context, UsersUtils xxxx)
         {
             _context = context;
             _logger = logger;
+            _xxxx = xxxx;
+
         }
 
         public IActionResult Index()
@@ -50,6 +54,31 @@ namespace WebApplicationStore.Controllers
 
             int a = 5;
             return View(homeViewModel); 
+        }
+
+        public IActionResult AddToBasket(String userId, int _productChargePropertiesId, int basketId)
+        {
+            Home homeViewModel = new Home();
+            var listHome = _context.ViewSiteHomes.ToList();
+
+            homeViewModel.listMain = listHome;
+
+            int xNewcount = _xxxx.AddItemToBasket( userId, _productChargePropertiesId, basketId);
+
+            int a = 5;
+            return Index();
+        }
+        public IActionResult RemoveFromBasket(String userId, int _productChargePropertiesId, int basketId)
+        {
+            //Home homeViewModel = new Home();
+            //var listHome = _context.ViewSiteHomes.ToList();
+
+            //homeViewModel.listMain = listHome;
+
+            int xNewcount = _xxxx.RemoveItemFromBasket(userId, _productChargePropertiesId, basketId);
+
+            int a = 5;
+            return Index();
         }
 
         public IActionResult Privacy()

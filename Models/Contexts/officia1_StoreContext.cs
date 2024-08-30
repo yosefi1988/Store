@@ -54,7 +54,7 @@ namespace WebApplicationStore.Models.Contexts
         public virtual DbSet<ViewAdminProductChargePropertiesId> ViewAdminProductChargePropertiesIds { get; set; } = null!;
         public virtual DbSet<ViewAdminShoppingBasketId> ViewAdminShoppingBasketIds { get; set; } = null!;
         public virtual DbSet<ViewAdminTransactionId> ViewAdminTransactionIds { get; set; } = null!;
-        public virtual DbSet<ViewAdminUserId> ViewAdminUserIds { get; set; } = null!;
+        public virtual DbSet<ViewAdminUser> ViewAdminUsers { get; set; } = null!;
         public virtual DbSet<ViewSiteHome> ViewSiteHomes { get; set; } = null!;
         public virtual DbSet<ViewSiteProductDetail> ViewSiteProductDetails { get; set; } = null!;
         public virtual DbSet<ViewSiteProductDetailsColor> ViewSiteProductDetailsColors { get; set; } = null!;
@@ -788,13 +788,19 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
             });
 
-            modelBuilder.Entity<ViewAdminUserId>(entity =>
+            modelBuilder.Entity<ViewAdminUser>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToView("View_Admin_UserID");
+                entity.ToView("View_Admin_Users");
+
+                entity.Property(e => e.Email).HasMaxLength(256);
 
                 entity.Property(e => e.Family).HasMaxLength(256);
+
+                entity.Property(e => e.Guid)
+                    .HasMaxLength(450)
+                    .HasColumnName("GUID");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -965,6 +971,8 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.ProductName).HasMaxLength(255);
 
                 entity.Property(e => e.ShoppingBasketId).HasColumnName("ShoppingBasketID");
+
+                entity.Property(e => e.ShoppingBasketObjectsId).HasColumnName("ShoppingBasketObjectsID");
 
                 entity.Property(e => e.Tax).HasMaxLength(255);
 

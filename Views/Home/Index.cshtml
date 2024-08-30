@@ -35,6 +35,11 @@
             @Html.ActionLink("جزئیات", "Index", "ProductDetials", new { id = @item.Id }, null)
 
             <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.Id })">جزئیات</a>
+            |
+
+            <a href="@Url.Action("AddToBasket", new { userId =  User.Identity.Name  , _productChargePropertiesId =  @item.Id , basketId =  0 })">AddToBasket</a>
+
+            
 
             <hr />
         </div>
@@ -47,6 +52,10 @@
         @*<input type="submit" value="ارسال درخواست" class="btn btn-success" />  *@
         <a class="btn btn-primary btn-block" asp-action="PaymenBytHttpClient"> پرداخت</a>
     </div>
+
+    @Html.ActionLink("مشاهده سبد ", "Index", "ShoppingBaskets", new { userId = User.Identity.Name, basketId = 0 }, null)
+    <br />
+    <a href="@Url.Action("Index", "ShoppingBaskets", new { userId = User.Identity.Name })">مشاهده سبد </a>
 
 </div>
 

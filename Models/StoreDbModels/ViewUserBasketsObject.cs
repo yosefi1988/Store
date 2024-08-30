@@ -7,6 +7,7 @@ namespace WebApplicationStore.Models.StoreDbModels
     {
         public int Id { get; set; }
         public int ShoppingBasketId { get; set; }
+        public int ShoppingBasketObjectsId { get; set; }
         public int? UserId { get; set; }
         public string? ProductName { get; set; }
         public int? ProductCode { get; set; }

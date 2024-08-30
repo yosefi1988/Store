@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WebApplicationStore.Controllers;
+using WebApplicationStore.Controllers.BusinessLayout;
 using WebApplicationStore.Controllers.Classroom;
 using WebApplicationStore.Models;
 using WebApplicationStore.Models.Contexts;
@@ -40,6 +41,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 
 builder.Services.AddScoped<IMessageSender, MessageSender>();
+builder.Services.AddScoped<UsersUtils>();
+
 builder.Services.AddDbContextPool<officia1_StoreContext>(options => options.UseSqlServer(sqlServerConnectionString));
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 //builder.Services.AddTransient<IEmailSender, YourSmsSender>();

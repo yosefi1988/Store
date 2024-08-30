@@ -1,5 +1,6 @@
 ﻿@using WebApplicationStore.Models.StoreDbModels
-@model WebApplicationStore.Models.ViewModels.ShopingBasket
+@using WebApplicationStore.Models.ViewModels.CustomModels
+@model WebApplicationStore.Models.ViewModels.ShoppingBasketDetails
 
 @{
     ViewData["Title"] = "Index";
@@ -20,7 +21,7 @@
 <hr />
     Baskets :
 <br />
-@foreach (ViewUserBasket item in Model.baskets)
+@foreach (ViewUserBasketCustom item in Model.baskets)
 {
     <div>
         @item.ShoppingBasketId
@@ -28,10 +29,52 @@
         @item.BasketStatusId
         @item.BasketStatus
 
-        @Html.ActionLink("مشاهده این ", "Index", "controler", new { id = @item.UserId }, null)
-        <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.UserId })">مشاهده این </a>
+        @item.isSelected
+
+        @Html.ActionLink("مشاهده این سبد ", "Index", "ShoppingBaskets", new { userId = @item.UserId, basketId = @item.ShoppingBasketId }, null)
+        <a href="@Url.Action("Index", "ShoppingBaskets", new { id =  @item.UserId })">مشاهده این سبد </a>|
+        <a href="@Url.Action("RemoveFromBasket", "Home", new { userId =  User.Identity.Name  , _productChargePropertiesId =  @item.Id , basketId =  0 })">حذف از سبد</a>
 
         <hr />
+    </div>
+}
+<hr />
+<hr />
+    Basket Objects :
+<br />
+@foreach (ViewUserBasketsObject item in Model.basketObjects)
+{
+    <div>           
+        @item.Id
+        @item.ShoppingBasketId
+        @item.UserId
+        @item.ProductName
+        @item.ProductCode
+        @item.Tax
+        @item.TaxPercentage
+        @item.PercentInterest
+        @item.PercentWages
+        @item.Color
+        @item.ColorCode
+        @item.Discount
+        @item.RemainingCount
+        @item.ProductChargePropertiesId
+        @item.ProductChargeId
+        @item.ProductId
+        @item.Price
+        @item.OldPrice
+        @item.Count
+        @item.AddInToBasketDate
+        @item.BasketStatusId
+        @item.BasketStatus
+
+        @Html.ActionLink("مشاهده این ", "Index", "controler", new { id = @item.UserId }, null)
+        <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.UserId })">مشاهده این </a>
+        <hr />
+
+        <a href="@Url.Action("Payment", "ProductDetials", new { id =  @item.UserId })">پرداخت و نهایی کردن خرید</a>
+
+
     </div>
 }
 <hr /> 

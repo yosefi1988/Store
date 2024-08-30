@@ -1,0 +1,82 @@
+﻿@using WebApplicationStore.Models.StoreDbModels
+@model WebApplicationStore.Models.ViewModels.ProductDetails
+
+ 
+@{
+    ViewBag.Title = "Location Selection";
+}
+
+<h2>Select Location</h2>
+
+
+<!-- Dropdown برای انتخاب کشور -->
+<select id="countryDropdown">
+    <option value="">Select Country</option>
+    @foreach (var country in ViewBag.Countries)
+    {
+        <option value="@country.Value">@country.Text</option>
+    }
+</select>
+
+<!-- Dropdown برای انتخاب استان -->
+<select id="stateDropdown">
+    <option value="">Select State</option>
+</select>
+
+<!-- Dropdown برای انتخاب شهر -->
+<select id="cityDropdown">
+    <option value="">Select City</option>
+</select>
+
+
+<br />
+Send Products Price
+<br />
+<!-- Dropdown  انتخاب  -->
+<select id="countryDropdown">
+    <option value="">Select Country</option>
+    @foreach (var country in ViewBag.SendProductsPrices)
+    {
+        <option value="@country.Value">@country.Text</option>
+    }
+</select>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // وقتی کشور انتخاب می‌شود، استان‌ها را لود می‌کنیم
+        $('#countryDropdown').change(function () {
+            var countryId = $(this).val();
+            if (countryId) {
+                $.getJSON('@Url.Action("GetStates", "ProductDetials")', { countryId: countryId }, function (data) {
+                    $('#stateDropdown').empty();
+                    $('#stateDropdown').append('<option value="">Select State</option>');
+                    $.each(data, function (index, item) {
+                        $('#stateDropdown').append('<option value="' + item.id + '">' + item.title + '</option>');
+                    });
+                });
+            } else {
+                $('#stateDropdown').empty();
+                $('#cityDropdown').empty();
+            }
+        });
+
+        // وقتی استان انتخاب می‌شود، شهرها را لود می‌کنیم
+        $('#stateDropdown').change(function () {
+            var stateId = $(this).val();
+            if (stateId) {
+                $.getJSON('@Url.Action("GetCities", "ProductDetials")', { stateId: stateId }, function (data) {
+                    $('#cityDropdown').empty();
+                    $('#cityDropdown').append('<option value="">Select City</option>');
+                    $.each(data, function (index, item) {
+                        $('#cityDropdown').append('<option value="' + item.id + '">' + item.title + '</option>');
+                    });
+                });
+            } else {
+                $('#cityDropdown').empty();
+            }
+        });
+
+         
+    });
+</script>
