@@ -1,46 +1,344 @@
 ﻿@using WebApplicationStore.Models.StoreDbModels
-@model WebApplicationStore.Models.ViewModels.ProductDetails
+@model WebApplicationStore.Models.ViewModels.PaymentModelView
 
  
 @{
     ViewBag.Title = "Location Selection";
-}
+    int SumTotalPriceWithTax = 0; // متغیر برای ذخیره جمع
+    int SumCount = 0;
+    int SumCountXPrice = 0;
+    int totalSumTAX = 0;
+}   
 
-<h2>Select Location</h2>
+@Html.HiddenFor(model => model.UserId)
+@Html.HiddenFor(model => model.SelectedBasketId)
+
+@foreach (ViewUserBasketsObject item in Model.ListBasketsObjects)
+{
+    <div>
+        @item.Id
+        @item.ShoppingBasketId
+        @item.ShoppingBasketObjectsId
+        @item.UserId
+        @item.ProductName
+        @item.ProductCode
+        @item.Tax
+        @item.TaxPercentage
+        @item.PercentInterest
+        @item.PercentWages
+        @item.Color
+        @item.ColorCode
+        @item.Discount
+        @item.RemainingCount
+        @item.ProductChargePropertiesId
+        @item.ProductChargeId
+        @item.ProductId
+        @item.Price
+        @item.OldPrice
+        @item.Count
+        @item.AddInToBasketDate
+        @item.BasketStatusId
+        @item.BasketStatus
+        @item.TotalPriceWithTax
+
+        @Html.ActionLink("جزئیات", "Index", "ProductDetials", new { id = @item.ProductChargePropertiesId }, null)
+
+        <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.ProductChargePropertiesId })">جزئیات</a> 
+@*         <a href="@Url.Action("AddToBasket", new { userId =  User.Identity.Name  , _productChargePropertiesId =  @item.Id , basketId =  0 })">AddToBasket</a>
+ *@ 
+    </div>
+
+    // جمع کردن TotalPriceWithTax
+    SumTotalPriceWithTax += (int) item.TotalPriceWithTax;<br />
+    SumCount += (int)item.Count;
+    SumCountXPrice += (int)item.Count * (int)item.Price;
+    totalSumTAX += (((int)item.Count * (int)item.Price) * (int)item.TaxPercentage) / 100;
+ 
+} 
+<div class="form-group">
+    <!-- فرم فرعی داخل فرم اصلی -->
+    <div id="subFormContainer">
+        <form id="subForm">
+            @Html.LabelFor(model => model.DiscountCode, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DiscountCode, new { htmlAttributes = new { @class = "form-control", id = "DiscountCode" } })
+                @Html.ValidationMessageFor(model => model.DiscountCode, "", new { @class = "text-danger" })
+            </div>
+            <button type="button" id="submitSubForm" class="btn btn-primary">ارسال کد تخفیف</button>
+        </form>
+
+        <!-- لیبل برای نمایش نتیجه -->
+        <label id="discountLabel" class="control-label col-md-2">نتیجه کد تخفیف</label>
+    </div>
+</div>
+<input type="hidden" id="couponIdHidden" name="CityID" />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#submitSubForm').click(function () {
+            var formData = {
+                DiscountCode: $('#DiscountCode').val() // گرفتن مقدار فیلد ورودی
+            };
+
+            $.ajax({
+                url: '@Url.Action("SubmitDiscountCode", "ProductDetials")',  // اکشن و کنترلر سرور
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    // بروزرسانی لیبل با مقدار بازگشتی
+                    //$('#discountLabel').text(response.message);
+
+                    // فرض کنید response یک شیء JSON باشد
+                    var message = response.message; // استخراج مقدار 'message' از JSON
+
+                    // بروزرسانی لیبل با مقادیر دریافت‌شده
+                    $('#discountLabel').text('Message: ' + message);
+
+                    if (message == "کد تخفیف نا معتبر است") {
+                        calculateDiscount(@SumTotalPriceWithTax, 0, 0);
+                    }
+                    else {
 
 
-<!-- Dropdown برای انتخاب کشور -->
-<select id="countryDropdown">
-    <option value="">Select Country</option>
-    @foreach (var country in ViewBag.Countries)
+                        const jsonString = message;
+
+                        const parsedData = JSON.parse(jsonString);
+                        const maxRialValue = parsedData.MaxRialValue;
+                        const couponPercent = parsedData.CouponPercent;
+                        const couponId = parsedData.Id;
+                        $('#discountLabel').append('</br>')
+                        $('#discountLabel').append('maxRialValue:' + maxRialValue)
+                        $('#discountLabel').append('</br>')
+                        $('#discountLabel').append('couponPercent:' + couponPercent)
+                        $('#discountLabel').append('</br>')
+                        $('#discountLabel').append('DiscountCodeID:' + couponId)
+
+                        $('#discountLabel').append('</br>')
+                        console.log(maxRialValue);  // 100000
+                        console.log(couponPercent); // 20
+                        console.log(couponId); // 20
+                        $('#discountLabelAmount').text('discountLabelAmount:' + maxRialValue)
+                        $('#discountLabelPercent').text('discountLabelPercent:' + couponPercent)
+                        document.getElementById('couponIdHidden').value = couponId;
+
+                        // برای نمونه می‌توانید به این شکل تابع را فراخوانی کنید:
+                        calculateDiscount(@SumTotalPriceWithTax, couponPercent, maxRialValue); // مبلغ اولیه: 100,000، درصد تخفیف: 20%، سقف تخفیف: 15,000
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    console.log("Error: " + error);
+                }
+            });
+        });
+        calculateDiscount(@SumTotalPriceWithTax, 0, 0);
+    });
+</script>
+<hr /> 
+<div class="form-group">
+    @* @Html.LabelFor(model => model.sdAddressDropdown, "addressDropdown", htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.DropDownListFor(model => model.sdAddressDropdown, Model.sdAddressDropdown, "-- Select Address --", new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.sdAddressDropdown, "", new { @class = "text-danger" })
+    </div>
+    *@
+            
+          
+    <select id="countryDropdown">
+        <option value="">Select Address</option>
+        @foreach (var country in Model.sdAddressDropdown)
+        {
+            <option value="@country.Value" data-meta="@country.Meta">@country.Text </option>
+        }
+    </select> 
+    <script>
+        document.getElementById('countryDropdown').addEventListener('change', function () {
+            // مقدار متا از گزینه انتخاب‌شده گرفته می‌شود
+            var selectedOption = this.options[this.selectedIndex];
+            //var metaValue = selectedOption.text.split(' ').pop(); // جدا کردن Meta از Text
+
+
+            var metaValue1 = selectedOption.getAttribute('data-meta'); // گرفتن مقدار Meta از data-meta
+            var value = selectedOption.getAttribute('value'); // گرفتن مقدار Meta از value
+            
+            // نمایش Meta با استفاده از alert
+            // if (metaValue1) {
+            //     alert("Selected Meta (CityId): " + metaValue1);
+            // }
+            // مقدار متا در hidden input قرار می‌گیرد
+            document.getElementById('cityIdHidden').value = metaValue1;
+            document.getElementById('cityIdLabel').textContent = metaValue1;
+
+
+            document.getElementById('addressIdHidden').value = value;
+            document.getElementById('addressIdLabel').textContent = value;
+
+            prepareSendType(metaValue1);
+        });
+    </script>
+
+    <br />
+    ,[CityID]
+    <input type="hidden" id="cityIdHidden" name="CityID" />
+    <label id="cityIdLabel"></label>
+    <br />
+    ,[AddressID]
+    <input type="hidden" id="addressIdHidden" name="CityID" />
+    <label id="addressIdLabel"></label>
+</div>
+<br /> 
+
+
+<select id="SendProductsPricesDropdown">
+    <option value="">Select</option>
+@*     @foreach (var country in ViewBag.SendProductsPrices)
     {
         <option value="@country.Value">@country.Text</option>
-    }
+    } *@
 </select>
+<script>
+    document.getElementById('SendProductsPricesDropdown').addEventListener('change', function () {
+        // مقدار متا از گزینه انتخاب‌شده گرفته می‌شود
+        var selectedOption = this.options[this.selectedIndex];
+        //var metaValue = selectedOption.text.split(' ').pop(); // جدا کردن Meta از Text
 
-<!-- Dropdown برای انتخاب استان -->
-<select id="stateDropdown">
-    <option value="">Select State</option>
-</select>
+        var metaValue1 = selectedOption.getAttribute('data-meta');  
+        var value = selectedOption.getAttribute('value'); 
 
-<!-- Dropdown برای انتخاب شهر -->
-<select id="cityDropdown">
-    <option value="">Select City</option>
-</select>
+        document.getElementById('sendTypeIdHidden').value = value;
+        document.getElementById('sendTypeIdLabel').textContent = value;
+        document.getElementById("SendAmount").textContent = metaValue1;
+
+        calculateFinalPrice();
+    });
+</script>
+,[Send Type ID]
+<input type="hidden" id="sendTypeIdHidden" name="CityID" />
+<label id="sendTypeIdLabel"></label>
+
+
+
+<hr />
+<label>جمع تعداد کل : @SumCount</label>
+<br />
+<label>جمع کل مبلغ محصولات: @SumCountXPrice</label>
+<br />
+<label>جمع کل مبلغ مالیات: @totalSumTAX</label>
+<br />
+
+<!-- نمایش جمع در یک label -->
+<label>جمع کل کالاهای سبد همراه با مالیات: @SumTotalPriceWithTax</label>
+<br />
+<label>جمع کل سبد بعد از تخفیف: <span id="totalBasketSumAfterCoupon">0</span></label>
+<br />
+<label>میزان تخفیف: <span id="totalTakhfif">0</span></label>
+<br />
+<label>هزینه ارسال: <span id="SendAmount">0</span></label>
+ 
+ <br />
+      ,[ShoppingBasketID]
+        @Html.DisplayFor(model => model.SelectedBasketId)   
+
+<br />
+<label id="discountLabelAmount" class="control-label col-md-2">0</label>
+<br />
+<br />
+
+<label id="discountLabelPercent" class="control-label col-md-2">0</label>
+<br /> 
 
 
 <br />
-Send Products Price
+      ,[SumShoppingBasketPrice]
 <br />
-<!-- Dropdown  انتخاب  -->
-<select id="countryDropdown">
-    <option value="">Select Country</option>
-    @foreach (var country in ViewBag.SendProductsPrices)
-    {
-        <option value="@country.Value">@country.Text</option>
-    }
-</select>
+<label>هزینه قابل پرداخت: <span id="finalTotalSum">0</span></label>
+<br />
 
+<br />
+      ,[SumShoppingBasketDiscount]
+<br />
+      ,[AmountForPay]
+<br />
+      ,[PaymentStatusID]
+<br />
+      ,[PaymentTrackingNo]
+<br />
+      ,[PaymentDate]  
+<br />
+  ---------------- end [SD_Transactions]----------------------
+<br />
+
+<div class="text-center">
+    <h1 class="display-4">zarinpal</h1>
+    @*<input type="submit" value="ارسال درخواست" class="btn btn-success" />  *@
+    <a 
+        class="btn btn-primary btn-block" 
+        asp-action="PaymenBytHttpClient"> پرداخت
+    </a>
+
+    <a href="#" onclick="submitPayment()">پرداخت2</a>
+
+
+    <script>
+        function submitPayment() {
+            var cityId = document.getElementById("cityIdHidden").value;
+            var addressId = document.getElementById("addressIdHidden").value;
+            var sendTypeId = document.getElementById("sendTypeIdHidden").value;
+            var totalSum = document.getElementById("finalTotalSum").textContent;
+            var DiscountCodeID = document.getElementById("couponIdHidden").value;
+            
+            var UserIdx = document.getElementById("UserId").value;
+            var SelectedBasketIdx = document.getElementById("SelectedBasketId").value;
+
+            // ساخت URL با استفاده از جاوااسکریپت
+            var url = '@Url.Action("PaymenBytHttpClient", "ProductDetials")' +
+                '?ids=' + SelectedBasketIdx + "1" +
+                '&ids=' + cityId + "2" +
+                '&ids=' + addressId + "3" +
+                '&ids=' + sendTypeId + "4" +
+                '&ids=' + totalSum + "5" +
+                '&ids=' + UserIdx + "6" + 
+                '&ids=' + DiscountCodeID + "7";
+
+            // انتقال کاربر به URL ساخته‌شده
+            window.location.href = url;
+        }
+
+    </script>
+
+</div>
+<br />
+ ----------------[SD_SendBoxs]----------------------
+<br />
+      ,[ShoppingBasketID]  
+        @Html.DisplayFor(model => model.SelectedBasketId)       
+<br />
+      ,[TransactionID]
+<br />
+      ,[SendPriceID]
+<br />
+      ,[SendTypeTitle] 
+     
+
+<br />
+      ,[FullName]
+<br />
+      ,[MobileNo]
+<br />
+      ,[SendDate]
+<br />
+      ,[SendStatusID]
+<br />
+      ,[SendTrackingNo]
+<br />
+  ----------------End [SD_SendBoxs]----------------------
+<br />
+  [UserId]
+<br />
+@Html.DisplayFor(model => model.UserId)
+<br />
+ 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -79,4 +377,76 @@ Send Products Price
 
          
     });
+
+    function calculateDiscount(AmountBeforeCoupon, discountPercent, discountCap) {
+        // محاسبه مقدار تخفیف
+        let discountAmount = (AmountBeforeCoupon * discountPercent) / 100;
+
+        // بررسی سقف تخفیف
+        if (discountAmount > discountCap) {
+            discountAmount = discountCap; // اگر تخفیف بیشتر از سقف بود، مقدار سقف تخفیف در نظر گرفته می‌شود
+        }
+
+        // کم کردن تخفیف از مبلغ اولیه
+        let AmountAfterCoupon = AmountBeforeCoupon - discountAmount;
+
+        // قرار دادن نتیجه در @SumTotalPriceWithTax
+        document.getElementById("totalBasketSumAfterCoupon").textContent = AmountAfterCoupon;
+        document.getElementById("totalTakhfif").textContent = AmountBeforeCoupon - AmountAfterCoupon;
+
+        calculateFinalPrice();
+    }
+
+    function calculateFinalPrice() {
+        var totalBasketSumAfterCouponElement = document.getElementById("totalBasketSumAfterCoupon");
+        var SendAmountElement = document.getElementById("SendAmount");
+        var tmp1 = parseFloat(SendAmountElement.textContent);
+        var tmp2 = parseFloat(totalBasketSumAfterCouponElement.textContent);
+        document.getElementById("finalTotalSum").textContent = tmp2 + tmp1
+    }
+
+
+    function prepareSendType(cityId) {
+        var formData = { CityId: cityId };  // ارسال مقدار cityId به عنوان داده به سرور
+ 
+        $.ajax({
+            url: '@Url.Action("SubmitSendTypeCode", "ProductDetials")',  // اکشن و کنترلر سرور
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                // اول DropDownList را پاک می‌کنیم
+                $("#SendProductsPricesDropdown").empty();
+
+                if (response.message) {
+                    var data = JSON.parse(response.message);
+
+                    // اضافه کردن هر آیتم به DropDownList
+                    $.each(data, function (i, item) {
+                        $("#SendProductsPricesDropdown").append(
+                            $("<option></option>")
+                                .val(item.Value)
+                                .text(item.Text)
+                                .attr("data-meta", item.Meta)  
+                        );
+                    });
+
+
+                    // on change DDl call
+                    var selectElement = document.getElementById("SendProductsPricesDropdown");
+                    selectElement.dispatchEvent(new Event('change'));
+
+                    calculateFinalPrice();
+                } else {
+                    // اگر داده‌ای برنگشت، می‌توانید پیغام خطا نمایش دهید
+                    alert("No products found for the selected city.");
+                }
+
+            },
+            error: function (xhr, status, error) {
+                console.log("Error: " + error);
+            }
+        });
+    }
+
+
 </script>

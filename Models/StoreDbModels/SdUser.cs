@@ -21,6 +21,7 @@ namespace WebApplicationStore.Models.StoreDbModels
         public string? Email { get; set; }
         public string? Description { get; set; }
         public string? AspNetUserId { get; set; }
+        public DateTime? JoinDate { get; set; }
 
         public virtual AspNetUser? AspNetUser { get; set; }
         public virtual ICollection<ScAdmin> ScAdmins { get; set; }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApplicationStore.Controllers.BusinessLayout;
+using WebApplicationStore.Controllers.Classroom;
 using WebApplicationStore.Models.Contexts;
 using WebApplicationStore.Models.StoreDbModels;
 using WebApplicationStore.Models.ViewModels;
@@ -12,18 +14,23 @@ namespace WebApplicationStore.Controllers
     {
         private readonly officia1_StoreContext _context;
         UsersUtils _xxxx;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ShoppingBasketsController(ILogger<HomeController> logger, officia1_StoreContext context, UsersUtils xxxx)
+        public ShoppingBasketsController(UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, officia1_StoreContext context, UsersUtils xxxx)
         {
             _context = context;
             //_logger = logger;
             _xxxx = xxxx;
+            _userManager = userManager;
         }
 
         // GET: ShoppingBasketsController
-        public ActionResult Index(String userId ,int basketId)
+        public ActionResult Index(int basketId)
         {
-            int userIddb = _xxxx.CheckUserId(userId);
+            //Query String = userId
+            //int userIddb = _xxxx.CheckUserId(userId);
+            var user = _userManager.GetUserAsync(User);
+            int userIddb = _xxxx.CheckUserId(user.Result.UserName);
 
             ShoppingBasketDetails shopingBasket = new ShoppingBasketDetails();
 

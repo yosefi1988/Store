@@ -12,6 +12,6 @@ namespace WebApplicationStore.Models.ViewModels
         public int? SelectedCountryId { get; set; }  // یا استفاده از نوع داده مناسب بر اساس ID
         public SdAddress sdAddress { get; set; }
         public String IdentityUserName { get; set; }
-
+        public int? SelectedStateId { get; set; } 
     }
 }

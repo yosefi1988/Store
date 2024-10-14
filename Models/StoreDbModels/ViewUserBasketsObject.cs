@@ -28,5 +28,6 @@ namespace WebApplicationStore.Models.StoreDbModels
         public DateTime? AddInToBasketDate { get; set; }
         public int? BasketStatusId { get; set; }
         public string? BasketStatus { get; set; }
+        public int? TotalPriceWithTax { get; set; }
     }
 }

@@ -10,10 +10,9 @@ namespace WebApplicationStore.Models.Contexts
     public partial class officia1_StoreContext : DbContext
     {
         public officia1_StoreContext(DbContextOptions<officia1_StoreContext> options)
-            : base(options)
+    : base(options)
         {
         }
-
 
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; } = null!;
         public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; } = null!;
@@ -63,6 +62,7 @@ namespace WebApplicationStore.Models.Contexts
         public virtual DbSet<ViewSiteProductDetailsSize> ViewSiteProductDetailsSizes { get; set; } = null!;
         public virtual DbSet<ViewUserBasket> ViewUserBaskets { get; set; } = null!;
         public virtual DbSet<ViewUserBasketsObject> ViewUserBasketsObjects { get; set; } = null!;
+        public virtual DbSet<ViewUserProductSendPrice> ViewUserProductSendPrices { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -340,12 +340,12 @@ namespace WebApplicationStore.Models.Contexts
                 entity.HasOne(d => d.City)
                     .WithMany(p => p.SdAddresses)
                     .HasForeignKey(d => d.CityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SD_Addresses_BD_Cities");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.SdAddresses)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_SD_Addresses_SD_Users");
             });
 
@@ -638,10 +638,7 @@ namespace WebApplicationStore.Models.Contexts
 
                 entity.Property(e => e.PaymentStatusId).HasColumnName("PaymentStatusID");
 
-                entity.Property(e => e.PaymentTrackingNo)
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .IsFixedLength();
+                entity.Property(e => e.PaymentTrackingNo).HasMaxLength(50);
 
                 entity.Property(e => e.ShoppingBasketId).HasColumnName("ShoppingBasketID");
 
@@ -671,6 +668,8 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.AspNetUserId).HasMaxLength(450);
 
                 entity.Property(e => e.Family).HasMaxLength(256);
+
+                entity.Property(e => e.JoinDate).HasColumnType("date");
 
                 entity.Property(e => e.Mobile).HasMaxLength(15);
 
@@ -803,6 +802,8 @@ namespace WebApplicationStore.Models.Contexts
                     .HasColumnName("GUID");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.JoinDate).HasColumnType("date");
 
                 entity.Property(e => e.Mobile).HasMaxLength(15);
 
@@ -977,6 +978,23 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.Tax).HasMaxLength(255);
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
+            });
+
+            modelBuilder.Entity<ViewUserProductSendPrice>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_User_ProductSend_Price");
+
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
+
+                entity.Property(e => e.ProductName).HasMaxLength(255);
+
+                entity.Property(e => e.SendTitle).HasMaxLength(256);
+
+                entity.Property(e => e.StateId).HasColumnName("StateID");
+
+                entity.Property(e => e.StateTitle).HasMaxLength(256);
             });
 
             OnModelCreatingPartial(modelBuilder);

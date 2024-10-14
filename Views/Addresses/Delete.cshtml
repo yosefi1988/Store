@@ -1,4 +1,4 @@
-﻿@* @model WebApplicationStoreAdmin.Models.SD_Addresses
+﻿@model WebApplicationStore.Models.StoreDbModels.SdAddress
 
 @{
     ViewBag.Title = "Delete";
@@ -14,18 +14,10 @@
         <dt>
             @Html.DisplayNameFor(model => model.Address)
         </dt>
-
         <dd>
             @Html.DisplayFor(model => model.Address)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.IsDefault)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IsDefault)
-        </dd>
 
         <dt>
             @Html.DisplayNameFor(model => model.FullName)
@@ -42,8 +34,32 @@
         <dd>
             @Html.DisplayFor(model => model.MobileNo)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.City.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.City.Title)
+        </dd>
+          
 
         <dt>
+            @Html.DisplayNameFor(model => model.IsDefault)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsDefault)
+        </dd>
+
+         @* <dt>
+            @Html.DisplayNameFor(model => model.MobileNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MobileNo)
+        </dd> *@
+
+    @*     <dt>
             @Html.DisplayNameFor(model => model.BD_Cities.Title)
         </dt>
 
@@ -57,7 +73,7 @@
 
         <dd>
             @Html.DisplayFor(model => model.SD_Users.Name)
-        </dd>
+        </dd> *@
 
     </dl>
 
@@ -70,4 +86,3 @@
         </div>
     }
 </div>
- *@

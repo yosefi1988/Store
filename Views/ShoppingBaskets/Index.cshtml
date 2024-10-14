@@ -34,8 +34,10 @@
         @Html.ActionLink("مشاهده این سبد ", "Index", "ShoppingBaskets", new { userId = @item.UserId, basketId = @item.ShoppingBasketId }, null)
         <a href="@Url.Action("Index", "ShoppingBaskets", new { id =  @item.UserId })">مشاهده این سبد </a>|
         <a href="@Url.Action("RemoveFromBasket", "Home", new { userId =  User.Identity.Name  , _productChargePropertiesId =  @item.Id , basketId =  0 })">حذف از سبد</a>
+        |<a href="@Url.Action("Payment", "ProductDetials", new { UserId =  @item.UserId, ShoppingBasketId =  @item.ShoppingBasketId  })">پرداخت و نهایی کردن خرید</a>
 
         <hr />
+
     </div>
 }
 <hr />
@@ -72,9 +74,7 @@
         <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.UserId })">مشاهده این </a>
         <hr />
 
-        <a href="@Url.Action("Payment", "ProductDetials", new { id =  @item.UserId })">پرداخت و نهایی کردن خرید</a>
-
-
     </div>
 }
+
 <hr /> 
