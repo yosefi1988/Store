@@ -30,73 +30,77 @@ namespace WebApplicationStore.Controllers
             //Query String = userId
             //int userIddb = _xxxx.CheckUserId(userId);
             var user = _userManager.GetUserAsync(User);
-            int userIddb = _xxxx.CheckUserId(user.Result.UserName);
-
-            ShoppingBasketDetails shopingBasket = new ShoppingBasketDetails();
-
-            if (userIddb != 0)
+            if (user.Result != null)
             {
-                //var baskets = _context.ViewUserBaskets;
-                //var basketsOrginalList = baskets
-                //    .Where(x => x.UserId == userIddb)
-                //    .ToList();
 
-                //for (int i = 0; i < basketsOrginalList.Count; i++)
-                //{
-                //    ViewUserBasketCustom newCustomItem = new ViewUserBasketCustom();
-                //    newCustomItem = new ViewUserBasketCustom()
-                //    {
-                //        Id = basketsOrginalList[i].Id,
-                //        UserId = basketsOrginalList[i].UserId,
-                //        BasketStatus = basketsOrginalList[i].BasketStatus,
-                //        BasketStatusId = basketsOrginalList[i].BasketStatusId,
-                //        ShoppingBasketId = basketsOrginalList[i].ShoppingBasketId
-                //    };
+                int userIddb = _xxxx.CheckUserId(user.Result.UserName);
 
-                //    if (basketsOrginalList[i].Id == basketId)
-                //    {
-                //        newCustomItem.isSelected = true;
-                //    }
+                ShoppingBasketDetails shopingBasket = new ShoppingBasketDetails();
 
-                //    if (shopingBasket.baskets == null)
-                //        shopingBasket.baskets = new List<ViewUserBasketCustom>();
-                //    shopingBasket.baskets.Add(newCustomItem);
-                //}
+                if (userIddb != 0)
+                {
+                    //var baskets = _context.ViewUserBaskets;
+                    //var basketsOrginalList = baskets
+                    //    .Where(x => x.UserId == userIddb)
+                    //    .ToList();
 
-                var basketsOrginalList = _context.ViewUserBaskets
-                                        .Where(x => x.UserId == userIddb)
-                                        .Select(basket => new ViewUserBasketCustom
-                                        {
-                                            Id = basket.Id,
-                                            UserId = basket.UserId,
-                                            BasketStatus = basket.BasketStatus,
-                                            BasketStatusId = basket.BasketStatusId,
-                                            ShoppingBasketId = basket.ShoppingBasketId,
-                                            isSelected = basket.Id == basketId
-                                        }).ToList();
+                    //for (int i = 0; i < basketsOrginalList.Count; i++)
+                    //{
+                    //    ViewUserBasketCustom newCustomItem = new ViewUserBasketCustom();
+                    //    newCustomItem = new ViewUserBasketCustom()
+                    //    {
+                    //        Id = basketsOrginalList[i].Id,
+                    //        UserId = basketsOrginalList[i].UserId,
+                    //        BasketStatus = basketsOrginalList[i].BasketStatus,
+                    //        BasketStatusId = basketsOrginalList[i].BasketStatusId,
+                    //        ShoppingBasketId = basketsOrginalList[i].ShoppingBasketId
+                    //    };
 
-                shopingBasket.baskets = basketsOrginalList;
+                    //    if (basketsOrginalList[i].Id == basketId)
+                    //    {
+                    //        newCustomItem.isSelected = true;
+                    //    }
+
+                    //    if (shopingBasket.baskets == null)
+                    //        shopingBasket.baskets = new List<ViewUserBasketCustom>();
+                    //    shopingBasket.baskets.Add(newCustomItem);
+                    //}
+
+                    var basketsOrginalList = _context.ViewUserBaskets
+                                            .Where(x => x.UserId == userIddb)
+                                            .Select(basket => new ViewUserBasketCustom
+                                            {
+                                                Id = basket.Id,
+                                                UserId = basket.UserId,
+                                                BasketStatus = basket.BasketStatus,
+                                                BasketStatusId = basket.BasketStatusId,
+                                                ShoppingBasketId = basket.ShoppingBasketId,
+                                                isSelected = basket.Id == basketId
+                                            }).ToList();
+
+                    shopingBasket.baskets = basketsOrginalList;
+                }
+                else
+                {
+                    shopingBasket.baskets = new List<ViewUserBasketCustom>();
+                }
+
+                if (basketId != 0)
+                {
+                    var basketObjects = _context.ViewUserBasketsObjects;
+                    shopingBasket.basketObjects = basketObjects
+                        .Where(x => x.ShoppingBasketId == basketId)
+                        .ToList();
+                }
+                else
+                {
+                    shopingBasket.basketObjects = new List<Models.StoreDbModels.ViewUserBasketsObject>();
+                }
+
+                //int a = 5;
+                return View(shopingBasket);
             }
-            else
-            {
-                shopingBasket.baskets = new List<ViewUserBasketCustom>();  
-            }
-
-            if (basketId != 0)
-            {
-                var basketObjects = _context.ViewUserBasketsObjects;
-                shopingBasket.basketObjects = basketObjects
-                    .Where(x => x.ShoppingBasketId == basketId)
-                    .ToList();
-            }
-            else
-            {
-                shopingBasket.basketObjects = new List<Models.StoreDbModels.ViewUserBasketsObject>();
-            }
-
-            //int a = 5;
-            return View(shopingBasket);
-
+            return BadRequest();
         }
 
         // GET: ShoppingBasketsController/Details/5

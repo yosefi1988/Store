@@ -1,133 +1,166 @@
 ﻿@using WebApplicationStore.Models.StoreDbModels
 @model WebApplicationStore.Models.ViewModels.ProductDetails
 
- 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "جزئیات محصول";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <h1 class="text-center">@Model.product.Title</h1>
+    <div class="row">
+        <div class="col-md-6">
+            @* <img src="@Model.product.image" class="img-fluid" alt="@Model.product.Name" style="max-height: 400px; object-fit: cover;"> *@
+        </div>
+        <div class="col-md-6">
+            <h4>نام محصول: @Model.product.Name</h4>
+            <p>کد محصول: @Model.product.Code</p>
+            <p>توضیحات: @Model.product.Description</p>
+            <p>قیمت خرید: @Model.product.BuyPrice تومان</p>
+            <p>درصد سود: @Model.product.PercentInterest%</p>
+            <p>درصد کارمزد: @Model.product.PercentWages%</p>
+            <p>تخفیف: @Model.product.Discount%</p>
+            <p>تعداد باقی‌مانده: @Model.product.RemainingCount</p>
+            <p>کد رنگ: <span style="background-color:@Model.product.ColorCode; padding: 5px; border-radius: 4px;"></span></p>
+        </div>
+    </div>
 
-@Model.product.Id
-@Model.product.Name
-@Model.product.Description
-@Model.product.Code
-@Model.product.BuyPrice
-@Model.product.PercentInterest
-@Model.product.PercentWages
-@Model.product.Discount
-@Model.product.RemainingCount
-@Model.product.Title
-@Model.product.ColorCode
+    <hr />
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h4>رنگ‌های دیگر</h4>
+    <div class="row">
+        @foreach (var item in Model.productDetails_Colors)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <p>رنگ: @item.Title</p>
+                        <p>کد رنگ: <span style="background-color:@item.ColorCode; padding: 5px; border-radius: 4px;"></span></p>
+                        <a href="@Url.Action("Index", "ProductDetials", new { id = item.OtherProductChargePropertiesId })" class="btn btn-outline-primary">مشاهده این رنگ</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 
-    @if (User.IsInRole("Admin"))
-    {
-        <p>Admin <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    }
-    else
-    {
-        <p>user <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    }
-     
+    <hr />
+    <h4>مشخصه‌ها</h4>
+    <ul style="list-style-type: none; padding: 0;">
+        @foreach (var item in Model.productDetailsSize)
+        {
+            var sizeValueDescription = item.SizeValueDescription ?? " ";
+            var descriptionWords = sizeValueDescription.Split(' ').Take(10);
+            var shortDescription = string.Join(" ", descriptionWords);
+            var hasMore = sizeValueDescription.Split(' ').Length > 10;
 
+            <li style="margin-bottom: 10px;">
+
+                <strong>@item.SizeTitle:</strong> @item.SizeValue
+                @if (!string.IsNullOrEmpty(item.SizeDescription)) // بررسی می‌کند که آیا SizeDescription خالی نیست
+                {
+                    @: - @item.SizeDescription
+                }
+                (
+                @if (hasMore)
+                {
+                    <span>@shortDescription ...</span>
+                    <a href="#" class="size-description" data-description="@Html.Raw(sizeValueDescription)" data-toggle="modal" data-target="#sizeDescriptionModal" class="btn btn-link">ادامه</a>
+                }
+                else
+                {
+                    <span>@sizeValueDescription</span>
+                }
+                )<br />
+
+
+ 
+
+            </li>
+        }
+    </ul>
+
+
+    <hr />
+
+    <h4>محصولات مشابه در همین اندازه</h4>
+    <div class="row">
+        @foreach (var item in Model.similarProductInSize)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">شماره فاکتور: @item.BuyInvoiceNumber</p>
+                        <p class="card-text">درصد سود: @item.PercentInterest%</p>
+                        <p class="card-text">درصد کارمزد: @item.PercentWages%</p>
+                        <p class="card-text">تخفیف: @item.Discount%</p>
+                        <p class="card-text">تعداد باقی‌مانده: @item.RemainingCount</p>
+                        <a href="@Url.Action("Index", "ProductDetials", new { id = item.ProductChargePropertiesId })" class="btn btn-outline-primary">مشاهده این سایز</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <hr />
+
+    <h4>هزینه‌های ارسال</h4>
+    <div class="row">
+        @foreach (var item in Model.productSendPrice)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <p>کشور: @item.Country</p>
+                        <p>استان: @item.State</p>
+                        <p>هزینه ارسال: @item.Price تومان</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center mt-5">
+        <h2>پرداخت با زرین‌پال</h2>
+        <a class="btn btn-success btn-lg" asp-action="PaymenBytHttpClient">پرداخت</a>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "ShoppingBaskets", new { userId = User.Identity.Name })" class="btn btn-secondary">مشاهده سبد خرید</a>
+    </div>
 </div>
 
-<hr />
-    Color:
-<br />
-@foreach (ViewSiteProductDetailsColor item in Model.productDetails_Colors)
-{
-    <div>
-        @item.ProductChargePropertiesId
-        @item.Title
-        @item.ColorCode
-        @item.OtherProductChargePropertiesId
-
-        @Html.ActionLink("مشاهده این رنک", "Index", "ProductDetials", new { id = @item.OtherProductChargePropertiesId }, null)
-        <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.OtherProductChargePropertiesId })">مشاهده این رنک</a>
-
-        <hr />
+<!-- Modal -->
+<div class="modal fade" id="sizeDescriptionModal" tabindex="-1" role="dialog" aria-labelledby="sizeDescriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sizeDescriptionModalLabel">توضیحات اندازه</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalSizeValueDescription"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
     </div>
-}
-<hr />
-    Size:
-<br />
-@foreach (ViewSiteProductDetailsSize item in Model.productDetailsSize)
-{
-    <div>
-        @item.ProductChargePropertiesId
-        @item.SizeTitle
-        @item.SizeDescription
-        @item.SizeValue
-        @item.SizeValueDescription
-
-        @*             @Html.ActionLink("للللل", "Index", "ProductDetials", new { id = @item.Id }, null)
-
-    <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.Id })">للللل</a> *@
-
-        <hr />
-    </div>
-}
-
-<hr />
-    Similar Size:
-<br />
-@foreach (ViewSiteProductDetailsSimilarProductInSize item in Model.similarProductInSize)
-{
-    <div>
-        @item.ProductChargePropertiesId
-        @item.Name
-        @item.BuyInvoiceNumber
-        @item.PercentInterest
-        @item.PercentWages
-        @item.Discount
-        @item.RemainingCount
-        @item.Title
-        @item.ImageUrl
-
-        @Html.ActionLink("مشاهده این سایز", "Index", "ProductDetials", new { id = @item.ProductChargePropertiesId }, null)
-        <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.ProductChargePropertiesId })">مشاهده این سایز</a>
-
-        <hr />
-    </div>
-}
-<hr />
-    Send Price:
-<br />
-@foreach (ViewSiteProductDetailsSendPrice item in Model.productSendPrice)
-{
-    <div>
-        @item.ProductId
-        @item.Product
-        @item.ProductCode
-        @item.ProductDescription
-        @item.SendId
-        @item.Send
-        @item.CountryId
-        @item.Country
-        @item.StateId
-        @item.State
-        @item.Price
-
-        @*             @Html.ActionLink("للللل", "Index", "ProductDetials", new { id = @item.Id }, null)
-
-    <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.Id })">للللل</a> *@
-
-        <hr />
-    </div>
-}
-
-<div class="text-center">
-    <h1 class="display-4">zarinpal</h1>
-    @*<input type="submit" value="ارسال درخواست" class="btn btn-success" />  *@
-    <a class="btn btn-primary btn-block" asp-action="PaymenBytHttpClient"> پرداخت</a>
 </div>
 
-</div>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $('#sizeDescriptionModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // دکمه که مودال را باز کرده
+            var description = button.data('description'); // توضیحات مقدار
+            var modal = $(this);
 
-
-
+            // نمایش توضیحات در مودال
+            modal.find('#modalSizeValueDescription').text(description);
+        });
+    </script>
+}

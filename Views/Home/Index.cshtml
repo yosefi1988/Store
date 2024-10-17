@@ -2,63 +2,45 @@
 @model WebApplicationStore.Models.ViewModels.Home
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "صفحه اصلی فروشگاه";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <h1 class="text-center">خوش آمدید به فروشگاه</h1>
+    <p class="text-center">درباره <a href="https://docs.microsoft.com/aspnet/core">ساخت اپلیکیشن‌های وب با ASP.NET Core</a> بیشتر بدانید.</p>
 
-    @if(User.IsInRole("Admin")){
-        <p>Admin <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    }else{
-        <p>user <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    }
-
-
-    @foreach (ViewSiteHome item in Model.listMain)
+    @if (User.IsInRole("Admin"))
     {
-        <div>
-            @item.Id
-            @item.Name
-
-            @item.BuyInvoiceNumber
-            @item.PercentInterest
-
-            @item.PercentWages
-            @item.Discount
-            @item.RemainingCount
-            @item.Title
-            @item.ImageUrl
-            @item.ColorCode
-              
-            @Html.ActionLink("جزئیات", "Index", "ProductDetials", new { id = @item.Id }, null)
-
-            <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.Id })">جزئیات</a>
-            |
-
-            <a href="@Url.Action("AddToBasket", new { userId =  User.Identity.Name  , _productChargePropertiesId =  @item.Id , basketId =  0 })">AddToBasket</a>
-
-            
-
-            <hr />
-        </div>
+        <p class="text-center">مدیر: <a href="https://docs.microsoft.com/aspnet/core">ساخت اپلیکیشن‌های وب با ASP.NET Core</a></p>
+    }
+    else
+    {
+        <p class="text-center">کاربر: <a href="https://docs.microsoft.com/aspnet/core">ساخت اپلیکیشن‌های وب با ASP.NET Core</a></p>
     }
 
-
-
-    <div class="text-center">
-        <h1 class="display-4">zarinpal</h1>
-        @*<input type="submit" value="ارسال درخواست" class="btn btn-success" />  *@
-        <a class="btn btn-primary btn-block" asp-action="PaymenBytHttpClient"> پرداخت</a>
+    <div class="row">
+        @foreach (var item in Model.listMain)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">شماره فاکتور: @item.BuyInvoiceNumber</p>
+                        <p class="card-text">درصد سود: @item.PercentInterest%</p>
+                        <p class="card-text">درصد کارمزد: @item.PercentWages%</p>
+                        <p class="card-text">تخفیف: @item.Discount%</p>
+                        <p class="card-text">تعداد باقی‌مانده: @item.RemainingCount</p>
+                        <p class="card-text">کد رنگ: <span style="background-color:@item.ColorCode; padding: 5px; border-radius: 4px;"></span></p>
+                        <a href="@Url.Action("Index", "ProductDetials", new { id = item.Id })" class="btn btn-info">جزئیات</a>
+                        <a href="@Url.Action("AddToBasket", new { userId = User.Identity.Name, _productChargePropertiesId = item.Id, basketId = 0 })" class="btn btn-primary">افزودن به سبد</a>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-
-    @Html.ActionLink("مشاهده سبد ", "Index", "ShoppingBaskets", new { userId = User.Identity.Name, basketId = 0 }, null)
-    <br />
-    <a href="@Url.Action("Index", "ShoppingBaskets", new { userId = User.Identity.Name })">مشاهده سبد </a>
-
 </div>
 
-
-
- 
+<div class="container text-center mt-5">
+    <a href="@Url.Action("Index", "ShoppingBaskets", new { userId = User.Identity.Name })" class="btn btn-secondary mt-3">مشاهده سبد</a>
+</div>

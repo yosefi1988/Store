@@ -2,79 +2,69 @@
 @using WebApplicationStore.Models.ViewModels.CustomModels
 @model WebApplicationStore.Models.ViewModels.ShoppingBasketDetails
 
-@{
-    ViewData["Title"] = "Index";
-}
+<h1 class="text-center mb-5">@ViewData["Title"]</h1>
 
-<h1>Index</h1>
+<div class="container">
+    <div class="d-flex justify-content-end mb-3">
+        <a class="btn btn-warning me-2" asp-action="Edit" asp-route-id="@Model?.Id">ویرایش</a>
+        <a class="btn btn-secondary" asp-action="Index">بازگشت به لیست</a>
+    </div>
 
-<div>
-    <h4>Shoping Basket</h4>
     <hr />
-    <dl class="row">
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-<hr />
-    Baskets :
-<br />
-@foreach (ViewUserBasketCustom item in Model.baskets)
-{
-    <div>
-        @item.ShoppingBasketId
-        @item.UserId
-        @item.BasketStatusId
-        @item.BasketStatus
 
-        @item.isSelected
+    <div class="row">
+        @foreach (ViewUserBasketCustom item in Model.baskets)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="card-title">سبد @item.BasketStatus</h6>
+                        <h6 class="card-title">کد سبد: @item.ShoppingBasketId</h6>
+                        <p class="card-text">سبد پیشفرض: @(item.isSelected ? "بله" : "خیر")</p>
 
-        @Html.ActionLink("مشاهده این سبد ", "Index", "ShoppingBaskets", new { userId = @item.UserId, basketId = @item.ShoppingBasketId }, null)
-        <a href="@Url.Action("Index", "ShoppingBaskets", new { id =  @item.UserId })">مشاهده این سبد </a>|
-        <a href="@Url.Action("RemoveFromBasket", "Home", new { userId =  User.Identity.Name  , _productChargePropertiesId =  @item.Id , basketId =  0 })">حذف از سبد</a>
-        |<a href="@Url.Action("Payment", "ProductDetials", new { UserId =  @item.UserId, ShoppingBasketId =  @item.ShoppingBasketId  })">پرداخت و نهایی کردن خرید</a>
-
-        <hr />
-
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-primary" href="@Url.Action("Index", "ShoppingBaskets", new { userId = @item.UserId, basketId = @item.ShoppingBasketId })">مشاهده سبد</a>
+                            <a class="btn btn-danger" href="@Url.Action("RemoveFromBasket", "Home", new { userId =  User.Identity.Name, _productChargePropertiesId =  @item.Id, basketId = 0 })">حذف از سبد</a>
+                            <a class="btn btn-success" href="@Url.Action("Payment", "ProductDetials", new { UserId =  @item.UserId, ShoppingBasketId = @item.ShoppingBasketId })">پرداخت و نهایی کردن خرید</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-}
-<hr />
-<hr />
-    Basket Objects :
-<br />
-@foreach (ViewUserBasketsObject item in Model.basketObjects)
-{
-    <div>           
-        @item.Id
-        @item.ShoppingBasketId
-        @item.UserId
-        @item.ProductName
-        @item.ProductCode
-        @item.Tax
-        @item.TaxPercentage
-        @item.PercentInterest
-        @item.PercentWages
-        @item.Color
-        @item.ColorCode
-        @item.Discount
-        @item.RemainingCount
-        @item.ProductChargePropertiesId
-        @item.ProductChargeId
-        @item.ProductId
-        @item.Price
-        @item.OldPrice
-        @item.Count
-        @item.AddInToBasketDate
-        @item.BasketStatusId
-        @item.BasketStatus
 
-        @Html.ActionLink("مشاهده این ", "Index", "controler", new { id = @item.UserId }, null)
-        <a href="@Url.Action("Index", "ProductDetials", new { id =  @item.UserId })">مشاهده این </a>
-        <hr />
+    <hr />
 
+    <h5>جزئیات محصولات سبد</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>نام محصول</th>
+                    <th>کد محصول</th>
+                    <th>قیمت (تومان)</th>
+                    <th>تخفیف (%)</th>
+                    <th>رنگ</th>
+                    <th>تاریخ اضافه شدن</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ViewUserBasketsObject item in Model.basketObjects)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.ProductCode</td>
+                        <td>@item.Price</td>
+                        <td>@item.Discount%</td>
+                        <td>@item.Color</td>
+                        <td>@item.AddInToBasketDate</td>
+                        <td>
+                            <a class="btn btn-info btn-sm" href="@Url.Action("Index", "ProductDetials", new { id = @item.ProductChargePropertiesId })">مشاهده محصول</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-}
-
-<hr /> 
+</div>
