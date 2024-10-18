@@ -26,6 +26,22 @@
 
     <hr />
 
+    <h4>تصاویر</h4>
+    <div class="row">
+        @foreach (var item in Model.productImages)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 250px; object-fit: cover;">
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <hr />
+
     <h4>رنگ‌های دیگر</h4>
     <div class="row">
         @foreach (var item in Model.productDetails_Colors)
@@ -101,10 +117,8 @@
             </div>
         }
     </div>
-
-    <hr />
-
-    <h4>هزینه‌های ارسال</h4>
+     
+@*     <h4>هزینه‌های ارسال</h4>
     <div class="row">
         @foreach (var item in Model.productSendPrice)
         {
@@ -118,16 +132,16 @@
                 </div>
             </div>
         }
-    </div>
+    </div> *@
 
-    <div class="text-center mt-5">
+@*     <div class="text-center mt-5">
         <h2>پرداخت با زرین‌پال</h2>
         <a class="btn btn-success btn-lg" asp-action="PaymenBytHttpClient">پرداخت</a>
-    </div>
+    </div> *@
 
-    <div class="text-center mt-4">
+@*     <div class="text-center mt-4">
         <a href="@Url.Action("Index", "ShoppingBaskets", new { userId = User.Identity.Name })" class="btn btn-secondary">مشاهده سبد خرید</a>
-    </div>
+    </div> *@
 </div>
 
 <!-- Modal -->

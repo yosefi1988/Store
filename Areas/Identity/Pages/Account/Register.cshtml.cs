@@ -19,7 +19,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using WebApplicationStore.Controllers.BusinessLayout;
 using WebApplicationStore.Controllers.Classroom;
+using WebApplicationStore.Models.Contexts;
+using WebApplicationStore.Models.StoreDbModels;
 using WebApplicationStore.Repositories;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -32,19 +35,25 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
         private readonly IMessageSender _messageSender;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly officia1_StoreContext _context;
+        private UsersUtils _usersUtils;
 
         public RegisterModel(
             IMessageSender messageSender,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger)
+            ILogger<RegisterModel> logger,
+            officia1_StoreContext context,
+            UsersUtils usersUtils)
         {
             _userManager = userManager;
             _userStore = userStore;
             _signInManager = signInManager;
             _logger = logger; 
             _messageSender = messageSender;
+            _context = context;
+            _usersUtils = usersUtils;
         }
 
         /// <summary>
@@ -135,43 +144,42 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
 
-
-
             if (_signInManager.IsSignedIn(User))
                 RedirectToPage("./Logout");
-
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var applicationUserObj = CreateAspNetUser();
 
                 //classroom
-                var user2 = new ApplicationUser()
+                var applicationUserTmp = new ApplicationUser()
                 {
                     Email = "",
                     PasswordHash = "",
                     Age = 20
                 };
-                user.Age = 21;
+                applicationUserObj.Age = 21;
 
-                await _userStore.SetUserNameAsync(user, Input.Mobile, CancellationToken.None);
+                await _userStore.SetUserNameAsync(applicationUserObj, Input.Mobile, CancellationToken.None);
                 //await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
-
+                var result = await _userManager.CreateAsync(applicationUserObj, Input.Password);
+                 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
                     var requestRoles = new List<string>() { string.Empty };
                     requestRoles.Add("کاربر عادی");
-                    await _userManager.AddToRoleAsync(user, "NORMAL");
+                    await _userManager.AddToRoleAsync(applicationUserObj, "NORMAL");
+                    var userId = await _userManager.GetUserIdAsync(applicationUserObj);
 
-                    var userId = await _userManager.GetUserIdAsync(user);
+
+                    prepareUserData(userId, Input.Mobile);
 
 
                     // emailConfirmation
-                    var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(applicationUserObj);
                     //forget password
                     //var emailConfirmationToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
@@ -195,7 +203,7 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
                     //}
                     //else
                     //{
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.SignInAsync(applicationUserObj, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     //}
                 }
@@ -207,6 +215,39 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private void prepareUserData(string userGUID, string mobile)
+        {
+            SdUser user = new SdUser();
+            user.Mobile = mobile;
+            user.Password = mobile.Substring(mobile.Length -4 , 4);
+            user.AspNetUserId = userGUID;
+            user.JoinDate = DateTime.Now;
+            _context.SdUsers.Add(user);
+            _context.SaveChanges();
+
+            List<SdShoppingBasket> aaaa = new List<SdShoppingBasket>(); 
+            aaaa.Add(new SdShoppingBasket()
+            {
+                UserId = user.Id,
+                StatusId = 1,
+                CreatedOn = DateTime.Now
+            });
+            aaaa.Add(new SdShoppingBasket()
+            {
+                UserId = user.Id,
+                StatusId = 2,
+                CreatedOn = DateTime.Now
+            });
+            aaaa.Add(new SdShoppingBasket()
+            {
+                UserId = user.Id,
+                StatusId = 3,
+                CreatedOn = DateTime.Now
+            }); 
+            _context.SdShoppingBaskets.AddRange(aaaa);
+            _context.SaveChanges();
         }
 
         private void sendEmail()
@@ -236,7 +277,7 @@ namespace WebApplicationStore.Areas.Identity.Pages.Account
             return Content(result.Succeeded ? "Confirmed" : "not Confirmed");
         }
 
-        private ApplicationUser CreateUser()
+        private ApplicationUser CreateAspNetUser()
         {
             try
             {

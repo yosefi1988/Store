@@ -44,6 +44,7 @@ namespace WebApplicationStore.Controllers
             var productSizelist = _context.ViewSiteProductDetailsSizes;
             var productSimilarSizelist = _context.ViewSiteProductDetailsSimilarProductInSizes;
             var productSendPrices = _context.ViewSiteProductDetailsSendPrices;
+            var productImages = _context.ViewSiteProductDetailsImages;
 
 
             productDetailsViewModel.product = productlist.Where(x => x.Id == id).ToList().FirstOrDefault();
@@ -51,6 +52,7 @@ namespace WebApplicationStore.Controllers
             productDetailsViewModel.productDetailsSize = productSizelist.Where(x => x.ProductChargePropertiesId == id).ToList();
             productDetailsViewModel.similarProductInSize = productSimilarSizelist.Where(x => x.ProductChargePropertiesId == id).ToList();
             productDetailsViewModel.productSendPrice = productSendPrices.Where(x => x.ProductId == productDetailsViewModel.product.Id).ToList();
+            productDetailsViewModel.productImages = productImages.Where(x => x.ProductChargePropertiesId == productDetailsViewModel.product.Id).ToList();
 
             //int a = 5;
             return View(productDetailsViewModel);
@@ -75,6 +77,13 @@ namespace WebApplicationStore.Controllers
                 .Where(x => x.ShoppingBasketId == ShoppingBasketId)
                 .ToList();
 
+            if (basketObjects.Count == 0)
+                return BadRequest();
+            else if (basketObjects.First().BasketStatusId == 5 || 
+                basketObjects.First().BasketStatusId == 6 || 
+                basketObjects.First().BasketStatusId == 7 ||
+                basketObjects.First().BasketStatusId == 8)
+                return BadRequest();
 
 
             var SendProductsPrices = _context.BdSendProductsPrices
@@ -205,75 +214,7 @@ namespace WebApplicationStore.Controllers
         {
             return View();
         }
-
-
-        public IActionResult VerifyPayment()
-        {
-
-            // string authorityverify;
-
-            try
-            {
-                VerifyParameters parameters = new VerifyParameters();
-
-
-                if (HttpContext.Request.Query["Authority"] != "")
-                {
-                    authority = HttpContext.Request.Query["Authority"];
-                }
-
-                parameters.authority = authority;
-                parameters.amount = amount;
-                parameters.merchant_id = merchant;
-
-
-                var client = new RestClient(URLs.verifyUrl);
-                RestSharp.Method method = RestSharp.Method.Post;
-                var request = new RestRequest("", method);
-
-                request.AddHeader("accept", "application/json");
-
-                request.AddHeader("content-type", "application/json");
-                request.AddJsonBody(parameters);
-
-                var response = client.ExecuteAsync(request);
-
-
-                JObject jodata = JObject.Parse(response.Result.Content);
-
-                string data = jodata["data"].ToString();
-
-                JObject jo = JObject.Parse(response.Result.Content);
-
-                string errors = jo["errors"].ToString();
-
-                if (data != "[]")
-                {
-                    string refid = jodata["data"]["ref_id"].ToString();
-
-                    ViewBag.code = refid;
-
-                    return View();
-                }
-                else if (errors != "[]")
-                {
-
-                    string errorscode = jo["errors"]["code"].ToString();
-
-                    return BadRequest($"error code {errorscode}");
-
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-
-                throw new Exception(ex.Message);
-            }
-            return NotFound();
-        }
-
+ 
         public async Task<IActionResult> PaymenBytHttpClient(string[] ids)
         {
             string SelectedBasketIdx = ids[0].Substring(0,ids[0].Length-1);
@@ -431,6 +372,9 @@ namespace WebApplicationStore.Controllers
         [HttpGet]
         public IActionResult VerifyByHttpClient(string Authority, string Status)
         {
+            var user = _userManager.GetUserAsync(User);
+            int userIddb = _xxxx.CheckUserId(user.Result.UserName);
+
             if (Status.Equals("OK"))
             {
                 if (authorities.ContainsKey(Authority))
@@ -438,10 +382,15 @@ namespace WebApplicationStore.Controllers
                     var authorityInfo = authorities[Authority];
                     //Console.WriteLine($"BasketIdx: {authorityInfo.BasketIdx}, Added at: {authorityInfo.AddedTime}");
 
-                    changeStatueOfShoppingBasket(authorityInfo.BasketIdx,1);
+
+                    changeStatueOfShoppingBasket(authorityInfo.BasketIdx,1, userIddb);
 
                     authorityInfo.Transaction.PaymentStatusId = 2;
                     _context.SdTransactions.Add(authorityInfo.Transaction);
+
+
+
+
                     _context.SaveChanges();
                     authorities.Remove(Authority);
                 }
@@ -454,7 +403,7 @@ namespace WebApplicationStore.Controllers
                     var authorityInfo = authorities[Authority];
                     //Console.WriteLine($"BasketIdx: {authorityInfo.BasketIdx}, Added at: {authorityInfo.AddedTime}");
 
-                    changeStatueOfShoppingBasket(authorityInfo.BasketIdx,0);
+                    changeStatueOfShoppingBasket(authorityInfo.BasketIdx,0, userIddb);
                     _context.SdTransactions.Add(authorityInfo.Transaction);
                     _context.SaveChanges();
                     authorities.Remove(Authority);
@@ -531,15 +480,56 @@ namespace WebApplicationStore.Controllers
             return Redirect("~/");
         }
 
-        private void changeStatueOfShoppingBasket(int BasketIdx, int ok)
+        private void changeStatueOfShoppingBasket(int BasketIdx, int ok,int userIddb)
         {
             var CurrentBasket = _context.SdShoppingBaskets
                 .Where(x => x.Id == BasketIdx)
                 .FirstOrDefault();
+
             if (CurrentBasket != null)
             {
                 if (ok == 1)
                 {
+                    if (CurrentBasket.StatusId == 1)
+                    {
+                        //update 2 = > 1
+                        var x1 = _context.SdShoppingBaskets
+                                .Where(items => items.UserId == userIddb && items.StatusId == 2)
+                                .FirstOrDefault();
+                        x1.StatusId = 1;
+
+                        SdShoppingBasket x2 = new SdShoppingBasket()
+                        {
+                            UserId = userIddb,
+                            StatusId = 2,
+                            CreatedOn = DateTime.Now
+                        };
+                        _context.SdShoppingBaskets.Add(x2);
+                    }
+                    else
+                    {
+                        if (CurrentBasket.StatusId == 2)
+                        {
+                            SdShoppingBasket x = new SdShoppingBasket()
+                            {
+                                UserId = userIddb,
+                                StatusId = 2,
+                                CreatedOn = DateTime.Now
+                            };
+                            _context.SdShoppingBaskets.Add(x);
+                        }
+                        if (CurrentBasket.StatusId == 3)
+                        {
+                            SdShoppingBasket x = new SdShoppingBasket()
+                            {
+                                UserId = userIddb,
+                                StatusId = 3,
+                                CreatedOn = DateTime.Now
+                            };
+                            _context.SdShoppingBaskets.Add(x);
+                        }
+                    }
+
                     //5
                     //در حال پردازش 
                     if (CurrentBasket != null)
@@ -555,6 +545,9 @@ namespace WebApplicationStore.Controllers
                 }
                 _context.SaveChanges();
             }
+
+
+
         }
 
 

@@ -9,6 +9,7 @@ namespace WebApplicationStore.Models.StoreDbModels
         public int SizeId { get; set; }
         public int ProductChargePropertiesId { get; set; }
         public string? Value { get; set; }
+        public bool CommonInProductCharge { get; set; }
         public string? Description { get; set; }
 
         public virtual SdProductChargesProperty ProductChargeProperties { get; set; } = null!;

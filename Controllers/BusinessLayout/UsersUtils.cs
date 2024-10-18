@@ -17,8 +17,6 @@ namespace WebApplicationStore.Controllers.BusinessLayout
             //_logger = logger;
         }
 
-
-
         public int CheckUserId(String userId)
         {
             int _userId = 0;
@@ -112,7 +110,6 @@ namespace WebApplicationStore.Controllers.BusinessLayout
         }
         public int RemoveItemFromBasket(String userId , int _productChargePropertiesId, int basketId)
         {
-
             int userIddb = CheckUserId(userId);
 
             ShoppingBasketDetails shopingBasket = new ShoppingBasketDetails();

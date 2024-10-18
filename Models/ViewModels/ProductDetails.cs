@@ -14,6 +14,7 @@ namespace WebApplicationStore.Models.ViewModels
         public List<ViewSiteProductDetailsSize>? productDetailsSize { get; set; }
         public List<ViewSiteProductDetailsSimilarProductInSize>? similarProductInSize { get; set; }
         public List<ViewSiteProductDetailsSendPrice>? productSendPrice { get; set; }
+        public List<ViewSiteProductDetailsImage>? productImages { get; set; }
 
     }
 

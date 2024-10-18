@@ -7,15 +7,19 @@
 
 <div class="container mt-4">
     <h1 class="text-center">خوش آمدید به فروشگاه</h1>
-    <p class="text-center">درباره <a href="https://docs.microsoft.com/aspnet/core">ساخت اپلیکیشن‌های وب با ASP.NET Core</a> بیشتر بدانید.</p>
-
+@*     <p class="text-center">درباره <a href="https://docs.microsoft.com/aspnet/core">ساخت اپلیکیشن‌های وب با ASP.NET Core</a> بیشتر بدانید.</p>
+ *@
     @if (User.IsInRole("Admin"))
     {
-        <p class="text-center">مدیر: <a href="https://docs.microsoft.com/aspnet/core">ساخت اپلیکیشن‌های وب با ASP.NET Core</a></p>
+        <p class="text-center">مدیر
+            @* <a href="https://docs.microsoft.com/aspnet/core">ساخت اپلیکیشن‌های وب با ASP.NET Core</a> *@
+            </p>
     }
     else
     {
-        <p class="text-center">کاربر: <a href="https://docs.microsoft.com/aspnet/core">ساخت اپلیکیشن‌های وب با ASP.NET Core</a></p>
+        <p class="text-center">کاربر
+            @* <a href="https://docs.microsoft.com/aspnet/core">ساخت اپلیکیشن‌های وب با ASP.NET Core</a> *@
+            </p>
     }
 
     <div class="row">
@@ -41,6 +45,7 @@
     </div>
 </div>
 
-<div class="container text-center mt-5">
+@* <div class="container text-center mt-5">
     <a href="@Url.Action("Index", "ShoppingBaskets", new { userId = User.Identity.Name })" class="btn btn-secondary mt-3">مشاهده سبد</a>
 </div>
+ *@

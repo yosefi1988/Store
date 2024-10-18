@@ -20,11 +20,10 @@
                     <div class="card-body">
                         <h6 class="card-title">سبد @item.BasketStatus</h6>
                         <h6 class="card-title">کد سبد: @item.ShoppingBasketId</h6>
-                        <p class="card-text">سبد پیشفرض: @(item.isSelected ? "بله" : "خیر")</p>
+                        <p class="card-text">@(item.isSelected ? "در حال نمایش جزئیات این سبد" : "")</p>
 
                         <div class="d-grid gap-2">
                             <a class="btn btn-primary" href="@Url.Action("Index", "ShoppingBaskets", new { userId = @item.UserId, basketId = @item.ShoppingBasketId })">مشاهده سبد</a>
-                            <a class="btn btn-danger" href="@Url.Action("RemoveFromBasket", "Home", new { userId =  User.Identity.Name, _productChargePropertiesId =  @item.Id, basketId = 0 })">حذف از سبد</a>
                             <a class="btn btn-success" href="@Url.Action("Payment", "ProductDetials", new { UserId =  @item.UserId, ShoppingBasketId = @item.ShoppingBasketId })">پرداخت و نهایی کردن خرید</a>
                         </div>
                     </div>
@@ -61,6 +60,10 @@
                         <td>@item.AddInToBasketDate</td>
                         <td>
                             <a class="btn btn-info btn-sm" href="@Url.Action("Index", "ProductDetials", new { id = @item.ProductChargePropertiesId })">مشاهده محصول</a>
+                            <a class="btn btn-danger" href="@Url.Action("RemoveFromBasket", "Home", new { 
+                                userId =  User.Identity.Name, 
+                                _productChargePropertiesId =  @item.ProductChargePropertiesId, 
+                                basketId = item.ShoppingBasketId })">حذف از سبد</a>
                         </td>
                     </tr>
                 }

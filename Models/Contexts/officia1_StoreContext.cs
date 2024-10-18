@@ -14,6 +14,8 @@ namespace WebApplicationStore.Models.Contexts
         {
         }
 
+
+
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; } = null!;
         public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; } = null!;
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; } = null!;
@@ -57,12 +59,14 @@ namespace WebApplicationStore.Models.Contexts
         public virtual DbSet<ViewSiteHome> ViewSiteHomes { get; set; } = null!;
         public virtual DbSet<ViewSiteProductDetail> ViewSiteProductDetails { get; set; } = null!;
         public virtual DbSet<ViewSiteProductDetailsColor> ViewSiteProductDetailsColors { get; set; } = null!;
+        public virtual DbSet<ViewSiteProductDetailsImage> ViewSiteProductDetailsImages { get; set; } = null!;
         public virtual DbSet<ViewSiteProductDetailsSendPrice> ViewSiteProductDetailsSendPrices { get; set; } = null!;
         public virtual DbSet<ViewSiteProductDetailsSimilarProductInSize> ViewSiteProductDetailsSimilarProductInSizes { get; set; } = null!;
         public virtual DbSet<ViewSiteProductDetailsSize> ViewSiteProductDetailsSizes { get; set; } = null!;
         public virtual DbSet<ViewUserBasket> ViewUserBaskets { get; set; } = null!;
         public virtual DbSet<ViewUserBasketsObject> ViewUserBasketsObjects { get; set; } = null!;
         public virtual DbSet<ViewUserProductSendPrice> ViewUserProductSendPrices { get; set; } = null!;
+        public virtual DbSet<ViewX> ViewXes { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -868,6 +872,23 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.Title).HasMaxLength(255);
             });
 
+            modelBuilder.Entity<ViewSiteProductDetailsImage>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_Site_ProductDetails_Images");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Name).HasMaxLength(255);
+
+                entity.Property(e => e.ProductChargeId).HasColumnName("ProductChargeID");
+
+                entity.Property(e => e.ProductChargePropertiesId).HasColumnName("ProductChargePropertiesID");
+
+                entity.Property(e => e.ProductId).HasColumnName("ProductID");
+            });
+
             modelBuilder.Entity<ViewSiteProductDetailsSendPrice>(entity =>
             {
                 entity.HasNoKey();
@@ -995,6 +1016,19 @@ namespace WebApplicationStore.Models.Contexts
                 entity.Property(e => e.StateId).HasColumnName("StateID");
 
                 entity.Property(e => e.StateTitle).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<ViewX>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("View_X");
+
+                entity.Property(e => e.Id).HasMaxLength(450);
+
+                entity.Property(e => e.Name).HasMaxLength(256);
+
+                entity.Property(e => e.NormalizedName).HasMaxLength(256);
             });
 
             OnModelCreatingPartial(modelBuilder);
