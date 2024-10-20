@@ -9,8 +9,88 @@
     <h1 class="text-center">@Model.product.Title</h1>
     <div class="row">
         <div class="col-md-6">
-            @* <img src="@Model.product.image" class="img-fluid" alt="@Model.product.Name" style="max-height: 400px; object-fit: cover;"> *@
+            <!-- Carousel with clickable images -->
+            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach (var item in Model.productImages)
+                    {
+                        <div class="carousel-item @(item == Model.productImages.First() ? "active" : "")">
+                            <img src="@item.ImageUrl" class="d-block w-100" alt="@item.Name" style="height: 250px; object-fit: contain; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="openModal('@Model.productImages.IndexOf(item)')">
+                        </div>
+                    }
+                </div>
+
+                <!-- Controls -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+
+                <!-- Thumbnails -->
+                <div class="mt-4 d-flex justify-content-center flex-wrap" style="gap: 10px;">
+                    <!-- Added flex-wrap and gap -->
+                    @foreach (var item in Model.productImages)
+                    {
+                        <img src="@item.ImageUrl" class="img-thumbnail" alt="@item.Name" style="height: 100px; width: 100px; object-fit: contain; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="openModal('@Model.productImages.IndexOf(item)')">
+                    }
+                </div>
+            </div>
+
+            <!-- Modal with carousel for fullscreen images -->
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="imageModalLabel">Full Screen Image</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Modal carousel -->
+                            <div id="modalCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    @foreach (var item in Model.productImages)
+                                    {
+                                        <div class="carousel-item @(item == Model.productImages.First() ? "active" : "")">
+                                            <img src="@item.ImageUrl" class="d-block" alt="@item.Name" style="max-width: 80%; max-height: 80vh; margin: auto; object-fit: contain;">
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Modal carousel controls -->
+                                <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- JavaScript to open modal and jump to the correct image -->
+        <script>
+            function openModal(index) {
+                var modalCarousel = new bootstrap.Carousel(document.getElementById('modalCarousel'));
+                modalCarousel.to(index); // Jump to the image corresponding to the clicked thumbnail or slide
+            }
+        </script>
+
+        <!-- CSS to prevent page scrolling when modal is open -->
+        <style>
+            body.modal-open {
+                overflow: hidden; /* Prevent page scroll */
+            }
+        </style>
+
         <div class="col-md-6">
             <h4>نام محصول: @Model.product.Name</h4>
             <p>کد محصول: @Model.product.Code</p>
@@ -22,40 +102,6 @@
             <p>تعداد باقی‌مانده: @Model.product.RemainingCount</p>
             <p>کد رنگ: <span style="background-color:@Model.product.ColorCode; padding: 5px; border-radius: 4px;"></span></p>
         </div>
-    </div>
-
-    <hr />
-
-    <h4>تصاویر</h4>
-    <div class="row">
-        @foreach (var item in Model.productImages)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 250px; object-fit: cover;">
-
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-    <hr />
-
-    <h4>رنگ‌های دیگر</h4>
-    <div class="row">
-        @foreach (var item in Model.productDetails_Colors)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <p>رنگ: @item.Title</p>
-                        <p>کد رنگ: <span style="background-color:@item.ColorCode; padding: 5px; border-radius: 4px;"></span></p>
-                        <a href="@Url.Action("Index", "ProductDetials", new { id = item.OtherProductChargePropertiesId })" class="btn btn-outline-primary">مشاهده این رنگ</a>
-                    </div>
-                </div>
-            </div>
-        }
     </div>
 
     <hr />
@@ -88,7 +134,7 @@
                 )<br />
 
 
- 
+
 
             </li>
         }
@@ -97,26 +143,99 @@
 
     <hr />
 
-    <h4>محصولات مشابه در همین اندازه</h4>
-    <div class="row">
-        @foreach (var item in Model.similarProductInSize)
+    <h4>تصاویر</h4>
+    <div class="row justify-content-center">
+        <!-- وسط‌چین کردن -->
+        @foreach (var item in Model.productImages)
         {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">@item.Name</h5>
-                        <p class="card-text">شماره فاکتور: @item.BuyInvoiceNumber</p>
-                        <p class="card-text">درصد سود: @item.PercentInterest%</p>
-                        <p class="card-text">درصد کارمزد: @item.PercentWages%</p>
-                        <p class="card-text">تخفیف: @item.Discount%</p>
-                        <p class="card-text">تعداد باقی‌مانده: @item.RemainingCount</p>
-                        <a href="@Url.Action("Index", "ProductDetials", new { id = item.ProductChargePropertiesId })" class="btn btn-outline-primary">مشاهده این سایز</a>
+            <div class="col-md-2 col-sm-4 col-6 mb-4">
+                <!-- تغییر کلاس به col-md-2 و اضافه کردن col-sm-4 و col-6 برای موبایل -->
+                <div class="card h-100" style="width: 90%;">
+                    <!-- تنظیم عرض کادر -->
+                    <div class="card-body text-center">
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="width: 100%; height: auto; object-fit: contain; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="openModal('@Model.productImages.IndexOf(item)')">
                     </div>
                 </div>
             </div>
         }
     </div>
+
+    <!-- اصلاح Media Query -->
+    <style>
+        /* استایل پیش‌فرض */
+        .card-img-top {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* برای صفحه‌های کوچکتر از 576px (مانند موبایل‌های کوچک) */
+        @@media (max-width: 576px) { /* از @@ استفاده کنید */
+            .card-img-top {
+                width: 75%; /* کوچک کردن تصویر به 75% در موبایل */
+                height: auto;
+            }
+        }
+
+        /* برای صفحه‌های بین 576px و 768px (مانند تبلت‌ها) */
+        @@media (min-width: 576px) and (max-width: 768px) {
+            .card-img-top {
+                width: 90%; /* کوچک کردن تصویر به 90% در تبلت */
+                height: auto;
+            }
+        }
+    </style>
+
+
+
+
+
+
+    <hr />
+
+    <h4>رنگ‌های دیگر</h4>
+    <div class="row">
+        @foreach (var item in Model.productDetails_Colors)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <p>رنگ: @item.Title</p>
+                        <p>کد رنگ: <span style="background-color:@item.ColorCode; padding: 5px; border-radius: 4px;"></span></p>
+                        <a href="@Url.Action("Index", "ProductDetials", new { id = item.OtherProductChargePropertiesId })" class="btn btn-outline-primary">مشاهده این رنگ</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+
+
+    <hr />
+
+    <h4>محصولات مشابه</h4>
+    <div class="row">
+        @foreach (var item in Model.similarProductInSize)
+        {
+            <div class="col-md-3 mb-4">
+                <!-- کوچک کردن ستون از col-md-4 به col-md-3 -->
+                <div class="card h-100" style="font-size: 0.9rem;">
+                    <!-- کاهش اندازه فونت -->
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="width: 100%; height: 150px; object-fit: contain; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModal">
+                    <div class="card-body">
+                        <h6 class="card-title">@item.Name</h6> <!-- استفاده از h6 برای کوچک‌تر شدن عنوان -->
+                        <p class="card-text">شماره فاکتور: @item.BuyInvoiceNumber</p>
+                        <p class="card-text">درصد سود: @item.PercentInterest%</p>
+                        <p class="card-text">درصد کارمزد: @item.PercentWages%</p>
+                        <p class="card-text">تخفیف: @item.Discount%</p>
+                        <p class="card-text">تعداد باقی‌مانده: @item.RemainingCount</p>
+                        <a href="@Url.Action("Index", "ProductDetials", new { id = item.ProductChargePropertiesId })" class="btn btn-outline-primary btn-sm">مشاهده این سایز</a> <!-- استفاده از btn-sm برای دکمه کوچک‌تر -->
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
      
 @*     <h4>هزینه‌های ارسال</h4>
     <div class="row">
@@ -178,3 +297,19 @@
         });
     </script>
 }
+
+<style>
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: gray; /* رنگ خاکستری برای فلش‌ها */
+    }
+
+    .img-thumbnail {
+        border: 2px solid gray; /* برای استایل بیشتر بندانگشتی‌ها */
+    }
+
+        .img-thumbnail:hover {
+            border-color: black; /* تغییر رنگ حاشیه بندانگشتی هنگام هاور */
+        }
+</style>
+
