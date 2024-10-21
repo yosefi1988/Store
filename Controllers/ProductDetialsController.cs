@@ -50,7 +50,7 @@ namespace WebApplicationStore.Controllers
             productDetailsViewModel.product = productlist.Where(x => x.Id == id).ToList().FirstOrDefault();
             productDetailsViewModel.productDetails_Colors = productColorlist.Where(x => x.ProductChargePropertiesId == id).ToList();
             productDetailsViewModel.productDetailsSize = productSizelist.Where(x => x.ProductChargePropertiesId == id).ToList();
-            productDetailsViewModel.similarProductInSize = productSimilarSizelist.Where(x => x.ProductChargePropertiesId == id).ToList();
+            productDetailsViewModel.similarProductInSize = productSimilarSizelist.Where(x => x.Id == id).ToList();
             productDetailsViewModel.productSendPrice = productSendPrices.Where(x => x.ProductId == productDetailsViewModel.product.Id).ToList();
             productDetailsViewModel.productImages = productImages.Where(x => x.ProductChargePropertiesId == productDetailsViewModel.product.Id).ToList();
 
