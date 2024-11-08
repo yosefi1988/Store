@@ -95,11 +95,15 @@ namespace WebApplicationStore.Controllers.BusinessLayout
                     //  \/
 
                     var defaultBasket = _context.SdShoppingBaskets
-                                        .Where(x => x.UserId == userIddb && x.StatusId == _context.BdShoppingBasketTypes
-                                            .Where(b => (bool) b.IsDefault)  
-                                            .OrderByDescending(b => b.Id)
-                                            .Select(b => b.Id)
-                                            .FirstOrDefault())
+                                        .Where(x => x.UserId == userIddb && 
+                                        
+                                            x.StatusId == _context.BdShoppingBasketTypes
+                                                            .Where(b => (bool)b.IsDefault)
+                                                            .OrderByDescending(b => b.Id)
+                                                           .Select(b => b.Id)
+                                                           .FirstOrDefault()
+                                                            
+                                                            )
                                         .ToList().FirstOrDefault();
 
 
@@ -150,14 +154,23 @@ namespace WebApplicationStore.Controllers.BusinessLayout
                                         .Where(x => x.ProductChargePropertiesId == _productChargePropertiesId && x.UserId == userIddb && x.ShoppingBasketId == BasketID)
                                         .FirstOrDefault();
 
+
+
             if (searchedItemInBasket == null)
             {
+
+
+                var ProductChargesProperties = _context.SdProductChargesProperties
+                                .FirstOrDefault(x => x.Id == _productChargePropertiesId);
+                var productPrice = _context.SdProductCharges
+                                .FirstOrDefault(x => x.Id == ProductChargesProperties.ProductChargeId);
+
                 //add new item
                 _context.SdShoppingBasketObjects.Add(new SdShoppingBasketObject()
                 {
                     Count = 1,
                     AddDate = DateTime.Now, 
-                    Price = 1200,
+                    Price = productPrice.BuyPrice,
                     ProductChargePropertiesId = _productChargePropertiesId,
                     ShoppingBasketId = BasketID,
                     

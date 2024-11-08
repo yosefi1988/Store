@@ -8,11 +8,6 @@
     int SumCount = 0;
     int SumCountXPrice = 0;
     int totalSumTAX = 0;
-    int totalTableDiscount = 0;
-
-
-    int IColumn = 0;
-
 }   
 
 @Html.HiddenFor(model => model.UserId)
@@ -28,12 +23,8 @@
                 <th>کد محصول</th>
                 <th>قیمت (تومان)</th>
                 <th>تخفیف (%)</th>
-                <th>تخفیف</th>
                 <th>رنگ</th>
                 <th>تعداد باقی‌مانده</th>
-                <th>درصد مالیات</th>
-
-                <th>مالیات</th>
                 <th>قیمت کل با مالیات (تومان)</th>
                 <th>تاریخ اضافه شدن</th>
                 <th>عملیات</th>
@@ -48,14 +39,9 @@
                     <td>@item.ProductCode</td>
                     <td>@item.Price</td>
                     <td>@item.Discount%</td>
-                    <td>@item.Disconut2</td>
                     <td>@item.Color (@item.ColorCode)</td>
                     <td>@item.RemainingCount</td>
-                    <td>@item.TaxPercentage% @item.Tax</td>
-                    <td>@item.TaxPercentage2</td>
-                    <td>@((item.Price * @item.Count) + item.TaxPercentage2 - item.Disconut2)</td>
-
-
+                    <td>@item.Count * @item.TaxPercentage /100</td>
                     <td>@item.AddInToBasketDate</td>
                     <td>
                         <a class="btn btn-info btn-sm" href="@Url.Action("Index", "ProductDetials", new { id = @item.ProductChargePropertiesId })">جزئیات</a>
@@ -67,16 +53,11 @@
                 </tr>
 
                 // جمع کردن TotalPriceWithTax
-                SumTotalPriceWithTax += (int)((@item.Count * @item.Price ) + item.TaxPercentage2);
+                SumTotalPriceWithTax += (int)(@item.Count * @item.TaxPercentage /100);
                 <br />
                 SumCount += (int)item.Count;
                 SumCountXPrice += (int)item.Count * (int)item.Price;
                 totalSumTAX += (((int)item.Count * (int)item.Price) * (int)item.TaxPercentage) / 100;
-                totalTableDiscount += (int)item.Disconut2;
-
-                int maliat = (((int)item.Price * (int)item.Count) * (int)item.TaxPercentage) / 100; 
-                int sumPrice = ((int)item.Price * (int)item.Count);
-                IColumn += ((sumPrice + maliat));
             }
         </tbody>
     </table>
@@ -106,39 +87,17 @@
 <div class="form-group">
     <!-- فرم فرعی داخل فرم اصلی -->
     <div id="subFormContainer">
-@*         <form id="subForm">
+        <form id="subForm">
             @Html.LabelFor(model => model.DiscountCode, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.DiscountCode, new { htmlAttributes = new { @class = "form-control", id = "DiscountCode" } })
                 @Html.ValidationMessageFor(model => model.DiscountCode, "", new { @class = "text-danger" })
             </div>
             <button type="button" id="submitSubForm" class="btn btn-primary">ارسال کد تخفیف</button>
-        </form> *@
-
-        <form id="subForm" class="d-flex flex-wrap align-items-center">
-            <label for="DiscountCode" class="control-label me-2">کد تخفیف:</label>
-            <div class="me-2">
-                @Html.EditorFor(model => model.DiscountCode, new { htmlAttributes = new { @class = "form-control", id = "DiscountCode" } })
-                @Html.ValidationMessageFor(model => model.DiscountCode, "", new { @class = "text-danger" })
-            </div>
-            <button type="button" id="submitSubForm" class="btn btn-primary">بررسی کد تخفیف</button>
         </form>
 
-        <style>
-            /* نمایش زیر هم برای صفحه‌های کوچک */
-            @@media (max-width: 576px) {
-                #subForm {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
-                #subForm > * {
-                    margin-bottom: 0.5rem;
-                }
-            }
-        </style>
-
         <!-- لیبل برای نمایش نتیجه -->
-        <label id="discountLabel" class="control-label col-md-5"></label>
+        <label id="discountLabel" class="control-label col-md-2">نتیجه کد تخفیف</label>
     </div>
 </div>
 <input type="hidden" id="couponIdHidden" name="CityID" />
@@ -163,13 +122,12 @@
                     var message = response.message; // استخراج مقدار 'message' از JSON
 
                     // بروزرسانی لیبل با مقادیر دریافت‌شده
+                    $('#discountLabel').text('Message: ' + message);
 
                     if (message == "کد تخفیف نا معتبر است") {
-                        $('#discountLabel').text('' + message);
                         calculateDiscount(@SumTotalPriceWithTax, 0, 0);
                     }
                     else {
-                        $('#discountLabel').text('');
 
 
                         const jsonString = message;
@@ -178,50 +136,23 @@
                         const maxRialValue = parsedData.MaxRialValue;
                         const couponPercent = parsedData.CouponPercent;
                         const couponId = parsedData.Id;
+                        $('#discountLabel').append('</br>')
+                        $('#discountLabel').append('maxRialValue:' + maxRialValue)
+                        $('#discountLabel').append('</br>')
+                        $('#discountLabel').append('couponPercent:' + couponPercent)
+                        $('#discountLabel').append('</br>')
+                        $('#discountLabel').append('DiscountCodeID:' + couponId)
 
                         $('#discountLabel').append('</br>')
-                        const tableHtml = `
-        <table class="table table-bordered table-hover w-100" style="width: 100%;">
-            <thead class="thead-light">
-                <tr>
-                    <th colspan="2">کد تخفیف</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>حداکثر تخفیف:</td>
-                    <td>` + maxRialValue + ` تومان</td>
-                </tr>
-                <tr>
-                    <td>درصد تخفیف:</td>
-                    <td>` + couponPercent + ` تومان</td>
-                </tr>
-                <tr>
-                    <td>شماره سری:</td>
-                    <td>` + couponId + `</td>
-                </tr>
-            </tbody>
-        </table>
-    `;
-
-
-
-                        $('#discountLabel').append(tableHtml)
-                        $('#discountLabel').append('</br>')
-
-                        // console.log(maxRialValue);  // 100000
-                        // console.log(couponPercent); // 20
-                        // console.log(couponId); // 20
-
-                        // $('#discountLabelAmount').text('discountLabelAmount:' + maxRialValue)
-                        // $('#discountLabelPercent').text('discountLabelPercent:' + couponPercent)
+                        console.log(maxRialValue);  // 100000
+                        console.log(couponPercent); // 20
+                        console.log(couponId); // 20
+                        $('#discountLabelAmount').text('discountLabelAmount:' + maxRialValue)
+                        $('#discountLabelPercent').text('discountLabelPercent:' + couponPercent)
                         document.getElementById('couponIdHidden').value = couponId;
 
                         // برای نمونه می‌توانید به این شکل تابع را فراخوانی کنید:
                         calculateDiscount(@SumTotalPriceWithTax, couponPercent, maxRialValue); // مبلغ اولیه: 100,000، درصد تخفیف: 20%، سقف تخفیف: 15,000
-
-
-
                     }
 
                 },
@@ -242,16 +173,14 @@
     </div>
     *@
             
- 
-    <select id="addressDropdown" style="text-align: right; direction: rtl;">
-        <option value="">انتخاب آدرس</option>
+          
+    <select id="addressDropdown">
+        <option value="">Select Address</option>
         @foreach (var country in Model.sdAddressDropdown)
         {
-            <option value="@country.Value" data-meta="@country.Meta">@country.Text</option>
+            <option value="@country.Value" data-meta="@country.Meta">@country.Text </option>
         }
-    </select>
-
-
+    </select> 
     <script>
         document.getElementById('addressDropdown').addEventListener('change', function () {
             // مقدار متا از گزینه انتخاب‌شده گرفته می‌شود
@@ -278,13 +207,17 @@
         });
     </script>
 
+    <br />
+    ,[CityID]
     <input type="hidden" id="cityIdHidden" name="CityID" />
-    <label id="cityIdLabel"></label> 
+    <label id="cityIdLabel"></label>
+    <br />
+    ,[AddressID]
     <input type="hidden" id="addressIdHidden" name="CityID" />
     <label id="addressIdLabel"></label>
 </div>
+<br /> 
 
-<br />
 
 <select id="SendProductsPricesDropdown">
     <option value="">Select</option>
@@ -308,66 +241,74 @@
 
         calculateFinalPrice();
     });
-</script> 
+</script>
+,[Send Type ID]
 <input type="hidden" id="sendTypeIdHidden" name="CityID" />
 <label id="sendTypeIdLabel"></label>
 
-<br /> 
+
+
+<hr />
+<label>جمع تعداد کل : @SumCount</label>
+<br />
+<label>جمع کل مبلغ محصولات: @SumCountXPrice</label>
+<br />
+<label>جمع کل مبلغ مالیات: @totalSumTAX</label>
 <br />
 
-<table class="table table-bordered table-hover">
-    <thead class="thead-light">
-        <tr>
-            <th colspan="2">فاکتور</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>جمع تعداد کل:</td>
-            <td>@SumCount</td>
-        </tr>
-        <tr>
-            <td>جمع کل مبلغ محصولات:</td>
-            <td>@SumCountXPrice تومان</td>
-        </tr>
-        <tr>
-            <td>جمع کل مبلغ مالیات:</td>
-            <td>@totalSumTAX تومان</td>
-        </tr>
-        <tr>
-            <td>جمع کل کالاهای سبد همراه با مالیات:</td>
-            <td>@SumTotalPriceWithTax تومان</td>
-        </tr>
-        <tr>
-            <td>جمع کل سبد بعد از تخفیف:</td>
-            <td><span id="totalBasketSumAfterCoupon">0</span> تومان</td>
-        </tr>
-        <tr>
-            <td>میزان تخفیف:</td>
-            <td><span id="totalTakhfif">@totalTableDiscount</span> تومان</td>
-        </tr>
-        <tr>
-            <td>هزینه ارسال:</td>
-            <td><span id="SendAmount">0</span> تومان</td>
-        </tr>
-        <tr>
-            <td>هزینه قابل پرداخت:</td>
-            <td><span id="finalTotalSum">0</span> تومان</td>
-        </tr>
-        <tr>
-            <td>UserId:</td>
-            <td>@Html.DisplayFor(model => model.UserId)</td>
-        </tr>
-    </tbody>
-</table>
+<!-- نمایش جمع در یک label -->
+<label>جمع کل کالاهای سبد همراه با مالیات: @SumTotalPriceWithTax</label>
+<br />
+<label>جمع کل سبد بعد از تخفیف: <span id="totalBasketSumAfterCoupon">0</span></label>
+<br />
+<label>میزان تخفیف: <span id="totalTakhfif">0</span></label>
+<br />
+<label>هزینه ارسال: <span id="SendAmount">0</span></label>
+ 
+ <br />
+      ,[ShoppingBasketID]
+        @Html.DisplayFor(model => model.SelectedBasketId)   
 
+<br />
+<label id="discountLabelAmount" class="control-label col-md-2">0</label>
+<br />
+<br />
+
+<label id="discountLabelPercent" class="control-label col-md-2">0</label>
+<br /> 
+
+
+<br />
+      ,[SumShoppingBasketPrice]
+<br />
+<label>هزینه قابل پرداخت: <span id="finalTotalSum">0</span></label>
+<br />
+
+<br />
+      ,[SumShoppingBasketDiscount]
+<br />
+      ,[AmountForPay]
+<br />
+      ,[PaymentStatusID]
+<br />
+      ,[PaymentTrackingNo]
+<br />
+      ,[PaymentDate]  
+<br />
+  ---------------- end [SD_Transactions]----------------------
+<br />
 
 <div class="text-center">
-@*     <a 
+    <h1 class="display-4">zarinpal</h1>
+    @*<input type="submit" value="ارسال درخواست" class="btn btn-success" />  *@
+    <a 
         class="btn btn-primary btn-block" 
-        asp-action="PaymenBytHttpClient">پرداخت
-    </a> *@
-    <a href="#" class="btn btn-primary btn-block" onclick="submitPayment()">پرداخت</a>
+        asp-action="PaymenBytHttpClient"> پرداخت
+    </a>
+
+    <a href="#" onclick="submitPayment()">پرداخت2</a>
+
+
     <script>
         function submitPayment() {
             var cityId = document.getElementById("cityIdHidden").value;
@@ -394,9 +335,39 @@
         }
 
     </script>
+
 </div>
+<br />
+ ----------------[SD_SendBoxs]----------------------
+<br />
+      ,[ShoppingBasketID]  
+        @Html.DisplayFor(model => model.SelectedBasketId)       
+<br />
+      ,[TransactionID]
+<br />
+      ,[SendPriceID]
+<br />
+      ,[SendTypeTitle] 
+     
 
-
+<br />
+      ,[FullName]
+<br />
+      ,[MobileNo]
+<br />
+      ,[SendDate]
+<br />
+      ,[SendStatusID]
+<br />
+      ,[SendTrackingNo]
+<br />
+  ----------------End [SD_SendBoxs]----------------------
+<br />
+  [UserId]
+<br />
+@Html.DisplayFor(model => model.UserId)
+<br />
+ 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () { 
@@ -496,9 +467,7 @@
 
         // قرار دادن نتیجه در @SumTotalPriceWithTax
         document.getElementById("totalBasketSumAfterCoupon").textContent = AmountAfterCoupon;
-
-        let tmp = @totalTableDiscount;
-        document.getElementById("totalTakhfif").textContent = tmp + discountAmount;
+        document.getElementById("totalTakhfif").textContent = AmountBeforeCoupon - AmountAfterCoupon;
 
         calculateFinalPrice();
     }
@@ -508,16 +477,8 @@
         var SendAmountElement = document.getElementById("SendAmount");
         var tmp1 = parseFloat(SendAmountElement.textContent);
         var tmp2 = parseFloat(totalBasketSumAfterCouponElement.textContent);
-
-        let tmp3 = @IColumn;
-
-        var tmp4 = document.getElementById("totalTakhfif").textContent;
-        document.getElementById("finalTotalSum").textContent = //tmp2 + tmp1 //+ "-" +
-
-            (tmp3 + tmp1) - tmp4;
-            //+ "-" + tmp2 +'x';
-
-        }
+        document.getElementById("finalTotalSum").textContent = tmp2 + tmp1
+    }
 
 
     function prepareSendType(cityId) {

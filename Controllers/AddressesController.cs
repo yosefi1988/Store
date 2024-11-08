@@ -62,6 +62,11 @@ namespace WebApplicationStoreAdmin.Controllers.Product
             {
                 return NotFound(); // استفاده از NotFound به جای HttpNotFound
             }
+            if (sD_Addresses.Count == 0)
+                return RedirectToAction("Create");
+            //    return RedirectToAction("SecondAction", new { id = 1 });
+
+
             if (userIddb != sD_Addresses.First().UserId)
             {
                 return BadRequest();
@@ -96,7 +101,8 @@ namespace WebApplicationStoreAdmin.Controllers.Product
                 }).ToList();
 
             IEnumerable<SelectListItem> stateDropdown = _context.BdStates
-                .Where(x => x.CountryId == int.Parse(countryDropdown.First().Value))
+                //.Where(x => x.CountryId == int.Parse(countryDropdown.First().Value))
+                .Where(x => x.CountryId == 1800)
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
@@ -105,7 +111,8 @@ namespace WebApplicationStoreAdmin.Controllers.Product
                 .ToList();
 
             IEnumerable<SelectListItem> cityDropdown = _context.BdCities
-                .Where(x => x.StateId == int.Parse(stateDropdown.First().Value))
+                //.Where(x => x.StateId == int.Parse(stateDropdown.First().Value))
+                .Where(x => x.StateId == 1800)
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
@@ -156,45 +163,67 @@ namespace WebApplicationStoreAdmin.Controllers.Product
 
             if (ModelState.IsValid)
             {
-                int userIddb = _xxxx.CheckUserId(model.IdentityUserName);
-                model.sdAddress.UserId = userIddb;
-                _context.SdAddresses.Add(model.sdAddress);
-
-
-                if ((bool) model.sdAddress.IsDefault)
+                try
                 {
-                    var addresses = _context.SdAddresses.Where(a => a.UserId == userIddb).ToList();
-                    if (addresses != null && addresses.Count > 0)
+
+                    int userIddb = _xxxx.CheckUserId(model.IdentityUserName);
+                    model.sdAddress.UserId = userIddb;
+                    _context.SdAddresses.Add(model.sdAddress);
+
+
+                    if ((bool)model.sdAddress.IsDefault)
                     {
-                        foreach (var address in addresses)
+                        var addresses = _context.SdAddresses.Where(a => a.UserId == userIddb).ToList();
+                        if (addresses != null && addresses.Count > 0)
                         {
-                            address.IsDefault = false;
+                            foreach (var address in addresses)
+                            {
+                                address.IsDefault = false;
+                            }
                         }
                     }
+                    _context.SaveChanges();
+                    return RedirectToAction("Index");
                 }
-                _context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                foreach (var state in ModelState)
+                catch
                 {
-                    foreach (var error in state.Value.Errors)
+                    // بازگشت به ویو در صورت خطا
+                    IEnumerable<SelectListItem> countryDropdownx = _context.BdCountries
+                            .Select(c => new SelectListItem
+                            {
+                                Value = c.Id.ToString(),
+                                Text = c.Title
+                            }).ToList();
+                    var model2x = new CreateAddressModelView
                     {
-                        // نمایش نام فیلد
-                        var fieldName = state.Key;
-
-                        // نمایش پیام خطا
-                        var errorMessage = error.ErrorMessage;
-                        var exception = error.Exception; // اگر خطا ناشی از یک استثنا باشد، اینجا موجود است
-
-                        // برای دیباگ یا لاگ می‌توانید از این خطاها استفاده کنید
-                        Debug.WriteLine($"Field: {fieldName}, Error: {errorMessage}");
-                        Debug.WriteLine($"Field: {fieldName}, Error: {errorMessage}");
-                    }
+                        countryDropdown = countryDropdownx,
+                        //SelectedCity = "-1",
+                        SelectedCountryId = -1,
+                        sdAddress = new SdAddress()
+                    };
+                    return View(model2x);
                 }
-
             }
+            //else
+            //{
+            //    foreach (var state in ModelState)
+            //    {
+            //        foreach (var error in state.Value.Errors)
+            //        {
+            //            // نمایش نام فیلد
+            //            var fieldName = state.Key;
+
+            //            // نمایش پیام خطا
+            //            var errorMessage = error.ErrorMessage;
+            //            var exception = error.Exception; // اگر خطا ناشی از یک استثنا باشد، اینجا موجود است
+
+            //            // برای دیباگ یا لاگ می‌توانید از این خطاها استفاده کنید
+            //            Debug.WriteLine($"Field: {fieldName}, Error: {errorMessage}");
+            //            Debug.WriteLine($"Field: {fieldName}, Error: {errorMessage}");
+            //        }
+            //    }
+
+            //}
 
 
             // بازگشت به ویو در صورت خطا

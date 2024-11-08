@@ -13,11 +13,13 @@ namespace WebApplicationStore.Models.StoreDbModels
         public int? ProductCode { get; set; }
         public string? Tax { get; set; }
         public int? TaxPercentage { get; set; }
+        public int? TaxPercentage2 { get; set; }
         public int? PercentInterest { get; set; }
         public int? PercentWages { get; set; }
         public string? Color { get; set; }
         public string? ColorCode { get; set; }
         public int? Discount { get; set; }
+        public int? Disconut2 { get; set; }
         public int? RemainingCount { get; set; }
         public int ProductChargePropertiesId { get; set; }
         public int? ProductChargeId { get; set; }
@@ -28,6 +30,5 @@ namespace WebApplicationStore.Models.StoreDbModels
         public DateTime? AddInToBasketDate { get; set; }
         public int? BasketStatusId { get; set; }
         public string? BasketStatus { get; set; }
-        public int? TotalPriceWithTax { get; set; }
     }
 }

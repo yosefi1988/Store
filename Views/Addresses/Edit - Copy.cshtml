@@ -1,58 +1,63 @@
 ﻿@model WebApplicationStore.Models.ViewModels.CreateAddressModelView
 
 @{
-    ViewBag.Title = "ویرایش آدرس";
+    ViewBag.Title = "Edit Address";
 }
 
-<h2>ویرایش آدرس</h2>
+<h2>Edit Address</h2>
 
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+ @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
-    <div class="container">
-       @*  <h4>ویرایش آدرس‌ها</h4> *@
-        <hr />
-        <div class="form-group row">
-            @Html.LabelFor(model => model.SelectedCountryId, "کشور", htmlAttributes: new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-6 col-sm-12">
-                @Html.DropDownListFor(model => model.SelectedCountryId, Model.countryDropdown, "-- انتخاب کشور --", new { @class = "form-control", id = "countryDropdown", @disabled = "disabled" })
+    <div class="form-horizontal">
+        <h4>Edit SD_Addresses</h4>
+        <hr />  
+         <div class="form-group">
+            @Html.LabelFor(model => model.SelectedCountryId, "Country", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.SelectedCountryId, Model.countryDropdown, "-- Select Country --", new { @class = "form-control", id = "countryDropdown" })
                 @Html.ValidationMessageFor(model => model.SelectedCountryId, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group row">
-            @Html.LabelFor(model => model.SelectedStateId, "استان", htmlAttributes: new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-6 col-sm-12">
-                @Html.DropDownListFor(model => model.SelectedStateId, Model.stateDropdown, "-- انتخاب استان --", new { @class = "form-control", id = "stateDropdown" })
+            
+        <div class="form-group">
+            @Html.LabelFor(model => model.SelectedStateId, "State", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.SelectedStateId, Model.stateDropdown, "-- Select State --", new { @class = "form-control", id = "stateDropdown" })
                 @Html.ValidationMessageFor(model => model.SelectedStateId, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.sdAddress.CityId, "شهر", htmlAttributes: new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-6 col-sm-12">
-                @Html.DropDownListFor(model => model.sdAddress.CityId, Model.cityDropdown, "-- انتخاب شهر --", new { @class = "form-control", id = "sdAddress_CityId" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.sdAddress.CityId, "City", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.sdAddress.CityId, Model.cityDropdown, "-- Select City --", new { @class = "form-control", id = "sdAddress_CityId" })
                 @Html.ValidationMessageFor(model => model.sdAddress.CityId, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <input type="hidden" asp-for="IdentityUserName" value="@User.Identity.Name" />
         @Html.HiddenFor(model => model.sdAddress.Id)
+        @* <input type="hidden" asp-for="sdAddress.Id" /> *@
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.sdAddress.Address, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-6 col-sm-12">
+        @Html.EditorFor(model => model.sdAddress.Id, new { htmlAttributes = new { @class = "form-control" } })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sdAddress.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
                 @Html.EditorFor(model => model.sdAddress.Address, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.sdAddress.Address, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.sdAddress.IsDefault, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-6 col-sm-12">
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.sdAddress.IsDefault, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
                 <div class="checkbox">
                     @Html.EditorFor(model => model.sdAddress.IsDefault)
                     @Html.ValidationMessageFor(model => model.sdAddress.IsDefault, "", new { @class = "text-danger" })
@@ -60,44 +65,44 @@
             </div>
         </div>
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.sdAddress.FullName, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+            @Html.LabelFor(model => model.sdAddress.FullName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
                 @Html.EditorFor(model => model.sdAddress.FullName, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.sdAddress.FullName, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.sdAddress.MobileNo, htmlAttributes: new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-6 col-sm-12">
+        <div class="form-group">
+            @Html.LabelFor(model => model.sdAddress.MobileNo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
                 @Html.EditorFor(model => model.sdAddress.MobileNo, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.sdAddress.MobileNo, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group row">
-            <div class="col-md-8 col-sm-12 text-center">
-                <input type="submit" value="ذخیره تغییرات" class="btn btn-primary" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save Changes" class="btn btn-default" />
             </div>
         </div>
     </div>
 }
 
-<div class="text-center mt-3">
-    <a asp-action="Index" class="btn btn-secondary">بازگشت به لیست</a>
+<div>
+    <a asp-action="Index">Back to List</a>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
-        // بارگذاری استان‌ها با انتخاب کشور
+        // Load states when country is selected
         $('#countryDropdown').change(function () {
             var countryId = $(this).val();
             if (countryId) {
                 $.getJSON('@Url.Action("GetStates", "Addresses")', { countryId: countryId }, function (data) {
                     $('#stateDropdown').empty();
-                    $('#stateDropdown').append('<option value="">انتخاب استان</option>');
+                    $('#stateDropdown').append('<option value="">Select State</option>');
                     $.each(data, function (index, item) {
                         $('#stateDropdown').append('<option value="' + item.id + '">' + item.title + '</option>');
                     });
@@ -108,13 +113,13 @@
             }
         });
 
-        // بارگذاری شهرها با انتخاب استان
+        // Load cities when state is selected
         $('#stateDropdown').change(function () {
             var stateId = $(this).val();
             if (stateId) {
                 $.getJSON('@Url.Action("GetCities", "Addresses")', { stateId: stateId }, function (data) {
                     $('#sdAddress_CityId').empty();
-                    $('#sdAddress_CityId').append('<option value="">انتخاب شهر</option>');
+                    $('#sdAddress_CityId').append('<option value="">Select City</option>');
                     $.each(data, function (index, item) {
                         $('#sdAddress_CityId').append('<option value="' + item.id + '">' + item.title + '</option>');
                     });

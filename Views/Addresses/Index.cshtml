@@ -4,60 +4,63 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>لیست آدرس‌ها</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+@*     @Html.ActionLink("ایجاد جدید", "Create", null, new { @class = "btn btn-danger" })
+ *@    @Html.Raw("<a href='" + Url.Action("Create") + "' class='btn btn-danger'>ثبت آدرس جدید</a>")
+
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Address)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsDefault)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FullName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MobileNo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.City.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.User.Name)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Address)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsDefault)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FullName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MobileNo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.City.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.User.Name)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-        </td>
-    </tr>
-}
+<!-- ساختار جدول برای حالت دسکتاپ -->
+<div class="table-responsive d-none d-md-block">
+    <table class="table">
+        <tr>
+            <th>آدرس</th>
+            <th>آدرس پیش‌فرض</th>
+            <th>نام کامل</th>
+            <th>شماره موبایل</th>
+            <th>شهر</th>
+            <th>نام کاربر</th>
+            <th>عملیات</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                <td>@(item.IsDefault ? "بله" : "خیر")</td>
+                <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                <td>@Html.DisplayFor(modelItem => item.MobileNo)</td>
+                <td>@Html.DisplayFor(modelItem => item.City.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.User.Name)</td>
+                <td>
+                    @Html.ActionLink("ویرایش", "Edit", new { id = item.Id }) |
+                    @* @Html.ActionLink("جزئیات", "Details", new { id = item.Id }) | *@
+                    @Html.ActionLink("حذف", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </table>
+</div>
 
-</table>
+<!-- ساختار کارت برای حالت موبایل -->
+<div class="card-container d-block d-md-none">
+    @foreach (var item in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">نام کامل: @Html.DisplayFor(modelItem => item.FullName)</h5>
+                <p class="card-text"><strong>آدرس:</strong> @Html.DisplayFor(modelItem => item.Address)</p>
+                <p class="card-text"><strong>شماره موبایل:</strong> @Html.DisplayFor(modelItem => item.MobileNo)</p>
+                <p class="card-text"><strong>شهر:</strong> @Html.DisplayFor(modelItem => item.City.Title)</p>
+                <p class="card-text"><strong>نام کاربر:</strong> @Html.DisplayFor(modelItem => item.User.Name)</p>
+                <p class="card-text"><strong>آدرس پیش‌فرض:</strong> @(item.IsDefault ? "بله" : "خیر")</p>
+                <div>
+                    @Html.ActionLink("ویرایش", "Edit", new { id = item.Id }, new { @class = "btn btn-primary btn-sm" })
+                    @* @Html.ActionLink("جزئیات", "Details", new { id = item.Id }, new { @class = "btn btn-info btn-sm" }) *@
+                    @Html.ActionLink("حذف", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-sm" })
+                </div>
+            </div>
+        </div>
+    }
+</div>

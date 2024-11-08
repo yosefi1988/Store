@@ -16,6 +16,7 @@ namespace WebApplicationStore.Models.Contexts
 
 
 
+
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; } = null!;
         public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; } = null!;
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; } = null!;
@@ -73,7 +74,7 @@ namespace WebApplicationStore.Models.Contexts
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=officialapp.ir;Database=officia1_Store;user id=officia1_VS_msi;password=0Kege?137;");
+                optionsBuilder.UseSqlServer("Server=officialapp.ir;Database=officia1_Store;user id=officia1_VS_msi;password=?36vq9sQ2;");
             }
         }
 
@@ -1035,6 +1036,9 @@ namespace WebApplicationStore.Models.Contexts
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+
+
     }
 
 }

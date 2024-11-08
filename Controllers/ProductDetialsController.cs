@@ -280,10 +280,11 @@ namespace WebApplicationStore.Controllers
                 .ToList();
             foreach (var item in userBasketsObjects)
             {
-                sumInBackend = sumInBackend + (int)item.TotalPriceWithTax;
-                SumShoppingBasketPrice = (int)SumShoppingBasketPrice + ((int)item.Count * (int)item.Price);
-                SumTaxAmount = SumTaxAmount + ((int)item.TaxPercentage * ((int)item.Count * (int)item.Price)/100);
-                SumBasketDiscountAmount = SumBasketDiscountAmount + (int)item.Discount;
+                int tmpTax = ((int)(item.Price * item.TaxPercentage)/100) + (int)item.Price ;
+                int tmpDis = ((int)(item.Price * item.Discount) / 100);
+                int tmpRowPay = tmpTax - tmpDis;
+
+                sumInBackend = (int) sumInBackend + (int)(tmpRowPay * item.Count);
             }
 
             //////////////////////////     Send Type      //////////////////////////////

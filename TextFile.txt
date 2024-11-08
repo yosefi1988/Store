@@ -1,9 +1,9 @@
 ﻿
  --ساخت مدل از دیتابیس
-Scaffold-DbContext "Server=officialapp.ir;Database=officia1_Store;user id=officia1_VS_msi;password=0Kege?137;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Models\StoreDbModels" -ContextDir "StoreDbContext" 
+Scaffold-DbContext "Server=officialapp.ir;Database=officia1_Store;user id=officia1_VS_msi;password=?36vq9sQ2;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Models\StoreDbModels" -ContextDir "StoreDbContext" 
  
  -- دفعات بعدی 
-Scaffold-DbContext "Server=officialapp.ir;Database=officia1_Store;user id=officia1_VS_msi;password=0Kege?137;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Models\StoreDbModels" -ContextDir "StoreDbContext" -context "officia1_StoreContextTmp" -Force
+Scaffold-DbContext "Server=officialapp.ir;Database=officia1_Store;user id=officia1_VS_msi;password=?36vq9sQ2;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Models\StoreDbModels" -ContextDir "StoreDbContext" -context "officia1_StoreContextTmp" -Force
 
 
 

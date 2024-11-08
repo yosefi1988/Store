@@ -178,12 +178,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/sajjad/Source/Repos/Store/WebApplicationStore/WebApplicationStore/Views/Addresses/Create - Copy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRkcmVzc2VzXENyZWF0ZSAtIENvcHkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/sajjad/Source/Repos/Store/WebApplicationStore/WebApplicationStore/Views/Addresses/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRkcmVzc2VzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/sajjad/Source/Repos/Store/WebApplicationStore/WebApplicationStore/Views/Addresses/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRkcmVzc2VzXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sajjad/Source/Repos/Store/WebApplicationStore/WebApplicationStore/Views/Addresses/Edit - Copy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRkcmVzc2VzXEVkaXQgLSBDb3B5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/sajjad/Source/Repos/Store/WebApplicationStore/WebApplicationStore/Views/Addresses/Edit.cshtml]
@@ -224,6 +232,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/sajjad/Source/Repos/Store/WebApplicationStore/WebApplicationStore/Views/ProductDetials/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdERldGlhbHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sajjad/Source/Repos/Store/WebApplicationStore/WebApplicationStore/Views/ProductDetials/Payment - Copy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdERldGlhbHNcUGF5bWVudCAtIENvcHkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/sajjad/Source/Repos/Store/WebApplicationStore/WebApplicationStore/Views/ProductDetials/Payment.cshtml]
